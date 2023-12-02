@@ -1,0 +1,7 @@
+div.container{
+    max-width: 600px;
+}
+
+.alert-success{
+    margin-top: 0px !important;
+}

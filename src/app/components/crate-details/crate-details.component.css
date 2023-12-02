@@ -1,0 +1,10 @@
+div.container{
+    max-width: 600px;
+}
+
+.alert-success{
+    margin-top: 0px !important;
+}
+.card.card-body.w-100{
+    border: none;
+}

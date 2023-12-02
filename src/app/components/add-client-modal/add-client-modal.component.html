@@ -1,0 +1,136 @@
+<button class="btn btn-success position-relative me-1" [ngClass]="customClassButton" data-bs-toggle="modal"
+  [attr.data-bs-target]="'#addClientModal' + farmer.id" [disabled]="!farmer.isActive">
+  {{textButton || 'Asignar cliente'}}
+  <span *ngIf="badgetext" class="position-absolute top-0 start-100 translate-middle badge rounded-pill"
+    [ngClass]="{
+      'bg-black': farmer.isActive,
+      'bg-danger': !farmer.isActive
+    }">
+    {{badgetext}}
+  </span>
+</button>
+
+<!-- MODAL -->
+<div class="modal" tabindex="-1" [attr.id]="'addClientModal' + farmer.id">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-truncate">Asigna cliente a:
+          <span class="fw-semibold">{{this.farmer.name}} {{this.farmer.surnames}}</span>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+        <form [formGroup]="form" *ngIf="saleHiringRequest === null">
+          <input #focusInput class="form-control form-control" type="text" (keyup)="onKeyDown()"
+            placeholder="Busca por DNI o nombre de cliente" aria-label="Escribe el DNI o nombre del cliente"
+            formControlName="dniOrName">
+        </form>
+        <div class="table-responsive">
+          <table *ngIf="saleHiringRequest === null" class="table table-hover mt-1">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Apellidos</th>
+                <th scope="col">DNI</th>
+                <th scope="col">Asignar</th>
+              </tr>
+            </thead>
+            <ng-container *ngIf="loadingCounter > 0">
+              <tr class="placeholder-glow">
+                <td>
+                  <p aria-hidden="true">
+                    <span class="placeholder col-6"></span>
+                  </p>
+                </td>
+                <td>
+                  <p aria-hidden="true">
+                    <span class="placeholder col-6"></span>
+                  </p>
+                </td>
+                <td>
+                  <p aria-hidden="true">
+                    <span class="placeholder col-6"></span>
+                  </p>
+                </td>
+                <td>
+                  <p aria-hidden="true">
+                    <span class="placeholder col-6"></span>
+                  </p>
+                </td>
+                <td>
+                  <p aria-hidden="true">
+                    <span class="placeholder col-6"></span>
+                  </p>
+                </td>
+              </tr>
+            </ng-container>
+            <ng-container *ngIf="loadingCounter === 0 && clients.length === 0">
+              <tr>
+                <td colspan="5"><span class="d-flex justify-content-center fw-light fst-italic">
+                  🫥 cliente no encontrado</span>
+                </td>
+              </tr>
+            </ng-container>
+            <ng-container *ngIf="form.get('dniOrName')?.value != '' && loadingCounter === 0">
+              <tbody *ngFor="let client of clients; let index = index">
+                <tr>
+                  <th scope="row">{{index + 1}}</th>
+                  <td>{{client.name}}</td>
+                  <td>{{client.surnames}}</td>
+                  <td>{{client.dni}}</td>
+                  <td><button type="button" (click)="onBookingHiring(client)" class="btn btn-success btn-sm ms-auto"
+                      [ngClass]="{'disabled': isBookingHiring || farmerHiring}">
+                      <span *ngIf="selectedClient && selectedClient.id === client.id && isBookingHiring"
+                        class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                      {{selectedClient && selectedClient.id === client.id && isBookingHiring ? '🚜💨'
+                      : 'asignar...'}}
+                    </button></td>
+                </tr>
+              </tbody>
+            </ng-container>
+          </table>
+        </div>
+
+        <div>
+          <span *ngIf="saleHiringRequest"
+            class="d-flex alert alert-success text-center mt-2 m-0 flex-fill pt-1 pb-1 ms-auto me-auto animate__animated animate__bounce"
+            role="alert">
+            👩‍🌾 ¡Cliente asignado con éxito!
+            <button type="button" (click)="reset()" class="btn btn-light btn-sm rounded me-1 ms-2"
+              aria-label="Crear nuevo">añadir otro</button>
+          </span>
+        </div>
+
+        <div *ngIf="errorMsg"
+          class="alert alert-danger text-center alert-dismissible mt-2 animate__animated animate__shakeX sticky-bottom" role="alert">
+          <div>{{errorMsg}}</div>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"
+            (click)="errorMsg = null"></button>
+        </div>
+
+        <div *ngIf="saleHiringRequest" class="container border rounded mt-1 p-2 bg-pos-it">
+          <div class="fs-4 ms-1">Cliente</div>
+          <div><span class="fw-semibold ms-4">Nombre: </span> {{saleHiringRequest.clientName}}</div>
+          <div><span class="fw-semibold ms-4">Apellidos: </span>{{saleHiringRequest.clientSurNames}}</div>
+          <div><span class="fw-semibold ms-4">Dirección: </span>{{saleHiringRequest.clientAddress}}</div>
+          <div><span class="fw-semibold ms-4">Teléfono: </span>{{saleHiringRequest.clientTelephone}}</div>
+          <div><span class="fw-semibold ms-4">Email: </span>{{saleHiringRequest.clientEmail}}</div>
+          <div class="fs-4 ms-1">Agricultor</div>
+          <div><span class="fw-semibold ms-4">Nombre: </span>{{saleHiringRequest.farmerName}}</div>
+          <div><span class="fw-semibold ms-4">Apellidos: </span>{{saleHiringRequest.farmerSurnames}}</div>
+          <div><span class="fw-semibold ms-4">Ciudad: </span>{{saleHiringRequest.farmerCity}}</div>
+          <div class="fs-4 ms-1">Tipo de cultivo</div>
+          <div class="ms-4 fw-semibold mb-2">{{saleHiringRequest.cropName}}</div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
+</div>

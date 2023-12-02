@@ -1,0 +1,105 @@
+<div class="container row justify-content-center ms-auto me-auto shadow-lg rounded pt-3 pb-3 position-relative">
+    <div class="d-flex align-items-center mb-4">
+        <button type="button" aria-label="volver atrás" class="btn-back" (click)="back()"></button>
+        <h1><span class="fs-1">Listado de clientes</span></h1>
+    </div>
+
+    <form [formGroup]="form" class="mb-1">
+        <div class="row">
+          <div class="col">
+            <input #focusInput class="form-control form-control" type="text" (keyup)="onKeyDown()"
+              placeholder="Busca por DNI o nombre de cliente" aria-label="Escribe el DNI o nombre del cliente"
+              formControlName="dniOrName">
+          </div>
+            <div class="col-4 mt-auto">
+              <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" role="switch" id="isActive" formControlName="isActive" (change)="onShowHiddenChange()">
+                  <label class="form-check-label" for="isActive">Mostrar ocultos</label>
+              </div>
+          </div>
+        </div>
+    </form>
+
+    <div *ngIf="this.errorMsg" class="alert alert-danger alert-dismissible animate__animated animate__flash m-4"
+      role="alert">
+      <div>😟 {{this.errorMsg}}</div>
+    </div>
+
+    <div class="table-responsive">
+        <table  class="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">DNI</th>
+              <th scope="col">Nombre</th>
+              <th scope="col">E-mail</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <!-- PLACEHOLDERS -->
+          <ng-container *ngIf="isLoadingClients || loadingCounter > 0">
+            <tr class="placeholder-glow" *ngFor="let i of this.placeHoldersItems">
+              <td>
+                <p aria-hidden="true">
+                  <span class="placeholder col-6"></span>
+                </p>
+              </td>
+              <td>
+                <p aria-hidden="true">
+                  <span class="placeholder col-6"></span>
+                </p>
+              </td>
+              <td>
+                <p aria-hidden="true">
+                  <span class="placeholder col-6"></span>
+                </p>
+              </td>
+              <td>
+                <p aria-hidden="true">
+                  <span class="placeholder col-6"></span>
+                </p>
+              </td>
+              <td>
+                <p aria-hidden="true">
+                  <span class="placeholder col-6"></span>
+                </p>
+              </td>
+            </tr>
+
+          </ng-container>
+
+          <ng-container *ngIf="!isLoadingClients && loadingCounter === 0">
+              <tbody *ngFor="let client of clients; let index = index">
+                <tr>
+                  <th scope="row">{{index + 1}}</th>
+                  <td>
+                    <span [ngClass]="{'fst-italic text-secondary': !client.isActive}">{{client.dni}}</span>
+                  </td>
+                  <td class="w-100">
+                    <span [ngClass]="{'fst-italic text-secondary': !client.isActive}">{{client.name}} {{client.surnames}}</span>
+                  </td>
+                  <td>
+                    <span [ngClass]="{'fst-italic text-secondary': !client.isActive}">{{client.email}}</span>
+                  </td>
+                  <td>
+                    <a [routerLink]="['/home/clientes/detalles', client.id]">
+                      detalles
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+          </ng-container>
+        </table>
+      </div>
+
+      <div class="d-flex justify-content-center fst-italic m-4" 
+        *ngIf="!isLoadingClients && clients.length === 0 && loadingCounter === 0">
+        🫥 No hay clientes que mostrar
+      </div>
+</div>
+
+<button aria-label="Añadir cliente" type="button"
+    class="btn btn-danger btn-lg fixed-bottom ms-auto rounded-circle btn-add"
+    [ngClass]="{'animate__animated animate__rotateOut animate__faster': showButtonAnim}"
+    (click)="showButtonAnim = true" (animationend)="goAddClient()">
+</button>

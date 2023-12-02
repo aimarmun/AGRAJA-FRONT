@@ -1,0 +1,147 @@
+<button class="btn btn-success position-relative me-1" [ngClass]="customClassButton" data-bs-toggle="modal"
+  [attr.data-bs-target]="'#addClientSaleModal' + crate.id" [disabled]="disabled">
+  {{textButton || 'Vender'}}
+</button>
+
+<!-- MODAL -->
+<div class="modal" tabindex="-1" [attr.id]="'addClientSaleModal' + crate.id">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-truncate">Vender a cliente
+          <span class="fw-semibold">{{crate.name}}</span>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+        <form *ngIf="!saleOk" [formGroup]="form" class="mb-2">
+          <div class="row ms-1">
+            <input #focusInput class="form-control form-control col" type="text" (keyup)="onKeyDown()"
+              placeholder="Busca por DNI o nombre" aria-label="Escribe el DNI o nombre del cliente"
+              formControlName="dniOrName">
+            <div class="col">
+              <select aria-label="Forma de pago" class="form-select me-0" formControlName="payOption" [ngClass]="{
+                        'is-valid': form.get('payOption')?.touched && !form.get('payOption')?.errors,
+                        'is-invalid': form.get('payOption')?.touched && form.get('payOption')?.errors
+                    }">
+                <option value="0">*Selecciona tipo pago</option>
+                <ng-container *ngFor="let payOption of payOptions">
+                  <option [value]="payOption.id">{{payOption.name}}</option>
+                </ng-container>
+              </select>
+            </div>
+          </div>
+
+        </form>
+        <div class="table-responsive">
+          <table *ngIf="!saleOk" class="table table-hover mt-1">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Apellidos</th>
+                <th scope="col">DNI</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <ng-container *ngIf="loadingCounter > 0">
+              <tr class="placeholder-glow">
+                <td>
+                  <p aria-hidden="true">
+                    <span class="placeholder col-6"></span>
+                  </p>
+                </td>
+                <td>
+                  <p aria-hidden="true">
+                    <span class="placeholder col-6"></span>
+                  </p>
+                </td>
+                <td>
+                  <p aria-hidden="true">
+                    <span class="placeholder col-6"></span>
+                  </p>
+                </td>
+                <td>
+                  <p aria-hidden="true">
+                    <span class="placeholder col-6"></span>
+                  </p>
+                </td>
+                <td>
+                  <p aria-hidden="true">
+                    <span class="placeholder col-6"></span>
+                  </p>
+                </td>
+              </tr>
+            </ng-container>
+            <ng-container *ngIf="loadingCounter === 0 && clients.length === 0">
+              <tr>
+                <td colspan="5">
+                  <span class="d-flex justify-content-center fw-light fst-italic">
+                    🫥 cliente no encontrado
+                  </span>
+                </td>
+              </tr>
+            </ng-container>
+            <ng-container *ngIf="form.get('dniOrName')?.value != '' && loadingCounter === 0">
+              <tbody *ngFor="let client of clients; let index = index">
+                <tr>
+                  <th scope="row">{{index + 1}}</th>
+                  <td>{{client.name}}</td>
+                  <td>{{client.surnames}}</td>
+                  <td>{{client.dni}}</td>
+                  <td><button type="button" (click)="onSale(client)" class="btn btn-success btn-sm ms-auto"
+                      [disabled]="!form.valid">
+                      <span *ngIf="selectedClient && selectedClient.id === client.id && isSaling"
+                        class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                      {{selectedClient && selectedClient.id === client.id && isSaling ? '🧺💨'
+                      : 'vender'}}
+                    </button></td>
+                </tr>
+              </tbody>
+            </ng-container>
+          </table>
+        </div>
+
+        <div>
+          <span *ngIf="saleOk"
+            class="d-flex alert alert-success text-center mt-2 m-0 flex-fill pt-1 pb-1 ms-auto me-auto animate__animated animate__bounce"
+            role="alert">
+            🧺 ¡Venta exitosa!
+          </span>
+        </div>
+
+        <div *ngIf="errorMsg"
+          class="alert alert-danger text-center alert-dismissible mt-2 animate__animated animate__shakeX" role="alert">
+          <div>{{errorMsg}}</div>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"
+            (click)="errorMsg = null"></button>
+        </div>
+
+        <div *ngIf="saleOk" class="container border rounded mt-1 p-2 bg-pos-it">
+          <div><span class="fw-semibold ms-4">Fecha de compra: </span> {{crateSaleRequest.saleDateTimeUtz | date: 'dd/MM/yyyy' }}</div>
+          <div class="fs-4 ms-1">Cliente</div>
+          <div><span class="fw-semibold ms-4">Nombre cliente: </span> {{crateSaleRequest.clientName}}</div>
+          <div><span class="fw-semibold ms-4">Apellidos: </span>{{crateSaleRequest.clientSurnames}}</div>
+          <div><span class="fw-semibold ms-4">Dirección: </span>{{crateSaleRequest.clientAddress}}</div>
+          <div><span class="fw-semibold ms-4">Teléfono: </span>{{crateSaleRequest.clientTelephone}}</div>
+          <div><span class="fw-semibold ms-4">Email: </span>{{crateSaleRequest.clientEmail}}</div>
+          <div class="fs-4 ms-1">Caja</div>
+          <div><span class="fw-semibold ms-4">Nombre: </span>{{crateSaleRequest.crateName}}</div>
+          <div><span class="fw-semibold ms-4">Descripción: </span>{{crateSaleRequest.crateDescription}}</div>
+          <div><span class="fw-semibold ms-4">Cantidad: </span>{{crateSaleRequest.amount}}</div>
+          <div><span class="fw-semibold ms-4">Total kilos: </span>{{crateSaleRequest.amount * crateSaleRequest.crateKilograms}}</div>
+
+          <div class="fs-4 ms-1">Forma de pago</div>
+          <div class="ms-4 fw-semibold mb-2">{{crateSaleRequest.payOptionName}}</div>
+          <div class="fs-4 ms-1 fw-bold">TOTAL: {{crateSaleRequest.totalPrice}}€</div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
+</div>

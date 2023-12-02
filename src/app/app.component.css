@@ -1,0 +1,7 @@
+nav img{
+    height: 3rem;
+}
+
+img:hover{
+    cursor: pointer;
+}

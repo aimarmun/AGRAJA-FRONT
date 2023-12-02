@@ -1,0 +1,61 @@
+<ng-container *ngIf="this.crate">
+    <div class="card mt-2 mb-2 position-relative">
+      <img 
+        [ngClass]="{
+          'img-no-loaded': !this.imgLoaded,
+          'img-farmer-inactive': !crate.isActive
+          }" 
+        [src]="this.imgSrc" class="card-img-top" alt="{{this.imgAlt}}"
+        (load)="imgCardLoaded()">
+        <div *ngIf="!crate.isActive" class="position-absolute top-0 mt-4 w-100 text-center fs-5 fst-italic z-1">
+          ⚠️ Caja deshabilitada
+        </div>
+      <div class="card-body">
+        <div class="position-absolute top-0 start-0 ps-2 pe-2 pt-1 overflow-auto w-100"
+          [ngClass]="{'card__crate-content': crate.isActive}">
+          <h5 class="card-title fw-bold text-light w-100 text-shadow fs-3"
+           >
+            {{this.crate.name}}
+          </h5>
+          <p class="card-text mb-2"><span class="text-light text-shadow"
+            >
+            {{this.crate.description}}</span></p>
+        </div>
+        <div class="d-flex mb-4 justify-content-between">
+          <div class="card-text"><span class="fw-bold">Kilos: </span><span>{{this.crate.kilograms}}</span></div>
+          <div class="card-text"><span class="fw-bold">Precio: </span><span>{{this.crate.price}}€</span></div>
+          <div class="card-text"><span class="fw-bold">Stock: </span><span>{{this.crate.stock - unitsInCart}}</span></div>
+        </div>
+
+        <div class="d-flex">
+          <a type="button" class="btn btn-primary h-100" [routerLink]="['/home/caja/detalles', crate.id]">Detalles</a>
+          
+          <div *ngIf="crate.isActive" class="border rounded ms-auto p-1 bg-sale-btn">
+            <div class="btn-group ms-auto me-1" role="group" aria-label="Añadir o eleminar unidades para su venta">
+              <button type="button" class="btn btn-secondary btn-sm" aria-label="restar" (click)="restUnitToCart()">-</button>
+              <button type="button" class="btn btn-outline-dark btn-sm" disabled>{{unitsInCart}}</button>
+              <!-- <input type="text" class="btn btn-outline-dark btn-sm w-25" placeholder="0" aria-label="Cantidad de cajas"> -->
+              <button type="button" class="btn btn-secondary btn-sm" aria-label="sumar" (click)="addUnitToCart()">+</button>
+            </div>
+            <!-- <div class="input-group">
+              <button class="btn btn-outline-secondary" type="button">-</button>
+              <input type="number" class="form-control" placeholder="0" aria-label="Cantidad de cajas">
+              <button class="btn btn-outline-secondary" type="button">+</button>
+            </div> -->
+              <!-- <button type="button" class="btn btn-success ms-1" [disabled]="this.unitsInCart === 0">Vender</button> -->
+              <app-add-client-sale-modal
+                [crate]="crate"
+                [amount]="unitsInCart"
+                [disabled]="this.unitsInCart === 0"
+                [payOptions]="payOptions"
+                classButton="btn-sm"
+                (onnewsale)="onNewSale($event)">
+              </app-add-client-sale-modal>
+          </div>
+          <div *ngIf="!crate.isActive" class="border rounded ms-auto p-1 bg-sale-btn w-50 text-center fw-light fst-italic">
+            deshabilitada
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container> 

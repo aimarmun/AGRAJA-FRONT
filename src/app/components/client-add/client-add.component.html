@@ -1,0 +1,119 @@
+<div class="container row justify-content-center ms-auto me-auto shadow-lg rounded pt-3 pb-3 position-relative">
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="col-12 pb-4 form-bg" novalidate>
+        <div class="d-flex align-items-center">
+          <button type="button" aria-label="volver atrás" class="btn-back" (click)="back()"></button>
+          <h1><span class="fs-1">Añadir cliente nuevo</span></h1>
+        </div>
+    
+        <div class="row">
+          <div class="mb-3 col">
+            <label for="farmerName" class="form-label">*Nombre:</label>
+            <input type="text" class="form-control" id="farmerName" [ngClass]="{
+                            'is-valid': form.get('name')?.touched && !form.get('name')?.errors,
+                            'is-invalid': form.get('name')?.touched && form.get('name')?.errors
+                        }" placeholder="nombre del cliente" formControlName="name">
+            <div *ngIf="form.get('name')?.errors">
+              <span *ngIf="form.get('name')?.touched && form.get('name')?.hasError('required')"
+                class="fs-6 fst-italic text-danger-emphasis">El nombre es obligatorio</span>
+              <span *ngIf="form.get('name')?.touched && form.get('name')?.hasError('minlength')"
+                class="fs-6 fst-italic text-danger-emphasis">El nombre debe tener un mínimo de
+                {{this.cons.PersonData.MIN_LENGTH_NAME}}
+                caracteres</span>
+              <span *ngIf="form.get('name')?.touched && form.get('name')?.hasError('maxlength')"
+                class="fs-6 fst-italic text-danger-emphasis">El nombre debe tener un máximo de
+                {{this.const.PersonData.MAX_LENGHT_NAME}
+                caracteres</span>
+            </div>
+          </div>
+
+          <div class="mb-3 col">
+            <label for="farmerSurnames" class="form-label">Apellidos:</label>
+            <input type="text" class="form-control" id="farmerSurnames" placeholder="apellidos" [ngClass]="{
+                            'is-valid': form.get('surnames')?.touched && !form.get('surnames')?.errors,
+                            'is-invalid': form.get('surnames')?.touched && form.get('surnames')?.errors
+                        }" formControlName="surnames">
+            <div *ngIf="form.get('surnames')?.errors">
+              <span *ngIf="form.get('surnames')?.touched && form.get('surnames')?.hasError('maxlength')"
+                class="fs-6 fst-italic text-danger-emphasis">Los apellidos deben tener un máximo de
+                {{this.cons.PersonData.MAX_LENGTH_SURNAMES}}
+                caracteres</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="mb-3 col">
+            <label for="farmerDni" class="form-label">*DNI:</label>
+            <input type="text" class="form-control" id="farmerDni" placeholder="DNI" [ngClass]="{
+                            'is-valid': form.get('dni')?.touched && !form.get('dni')?.errors,
+                            'is-invalid': form.get('dni')?.touched && form.get('dni')?.errors
+                        }" formControlName="dni">
+            <div *ngIf="form.get('dni')?.errors">
+              <span *ngIf=" checkError('dni', 'dnivalidator')"
+                class="fs-6 fst-italic text-danger-emphasis">{{form.get('dni')?.errors?.['dnivalidator']}}</span>
+            </div>
+          </div>
+
+          <div class="mb-3 col">
+            <label for="farmerTel" class="form-label">Teléfono:</label>
+            <input type="text" class="form-control" id="farmerTel" placeholder="teléfono" [ngClass]="{
+                            'is-valid': form.get('telephone')?.touched && !form.get('telephone')?.errors,
+                            'is-invalid': form.get('telephone')?.touched && form.get('telephone')?.errors
+                        }" formControlName="telephone">
+            <div *ngIf="form.get('telephone')?.errors">
+              <span *ngIf=" checkError('telephone', 'telvalidator')"
+                class="fs-6 fst-italic text-danger-emphasis">{{form.get('telephone')?.errors?.['telvalidator']}}</span>
+            </div>
+          </div>
+
+          <div class="mb-3 col">
+            <label for="farmerEmail" class="form-label">E-mail:</label>
+            <input type="email" class="form-control" id="farmerEmail" placeholder="email" [ngClass]="{
+                        'is-valid': form.get('email')?.touched && !form.get('email')?.errors,
+                        'is-invalid': form.get('email')?.touched && form.get('email')?.errors
+                    }" formControlName="email">
+            <div *ngIf="form.get('email')?.touched && form.get('email')?.errors">
+              <span *ngIf=" form.get('email')?.hasError('maxlength')" class="fs-6 fst-italic text-danger-emphasis">El email
+                ha superado la longitud máxima</span>
+            </div>
+            <div *ngIf="form.get('email')?.touched && form.get('email')?.errors">
+              <span *ngIf=" form.get('email')?.hasError('email')" class="fs-6 fst-italic text-danger-emphasis">El
+                formato no es correcto</span>
+            </div>
+          </div>
+        </div>
+    
+        <div class="mb-3">
+          <label for="farmerDir" class="form-label">Dirección:</label>
+          <textarea rows="3" class="form-control" id="farmerDir" placeholder="dirección" [ngClass]="{
+                    'is-valid': form.get('address')?.touched && !form.get('address')?.errors,
+                    'is-invalid': form.get('address')?.touched && form.get('address')?.errors
+                }" formControlName="address"></textarea>
+          <div *ngIf="form.get('address')?.touched && form.get('address')?.errors">
+            <span *ngIf=" form.get('address')?.hasError('maxlength')" class="fs-6 fst-italic text-danger-emphasis">La
+              dirección ha superado los
+              {{cons.PersonData.MAX_LENGTH_ADDRESS}} caracteres permitidos</span>
+          </div>
+        </div>
+        
+        <div *ngIf="errorAddClient" class="alert alert-danger alert-dismissible mt-2 animate__animated animate__shakeX"
+          role="alert">
+          <div>{{errorAddClient}}</div>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"
+            (click)="closeError()"></button>
+        </div>
+    
+        <div class="d-flex mb-2 mt-2">
+          <button *ngIf="!showAddingOk" [disabled]="isAddingClient || !form.valid" type="submit"
+            class="btn btn-primary align-self-center">{{form.valid ? '👨‍👩‍👧‍👦 Añadir nuevo cliente' : 'Algún dato no es válido'}}</button>
+        
+          <span *ngIf="showAddingOk"
+            class="alert alert-success animate__animated animate__bounceInUp text-center mt-2 m-0 flex-fill pt-1 pb-1"
+            role="alert">
+            👨‍👩‍👧‍👦 ¡Añadido con éxito! <button type="button" (click)="reset()" class="btn btn-light btn-sm rounded me-1"
+            aria-label="Crear nuevo">crear otro nuevo</button> o <a [routerLink]="['/home/clientes']">volver a la lista.</a>
+          </span>
+        </div>
+      </form>
+</div>

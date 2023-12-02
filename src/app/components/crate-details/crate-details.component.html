@@ -1,0 +1,250 @@
+<div class="container row justify-content-center ms-auto me-auto shadow-lg rounded pt-3 pb-3 position-relative">
+
+  <div *ngIf="this.errorNotFound" class="alert alert-danger alert-dismissible animate__animated animate__flash m-4"
+    role="alert">
+    <div>😟 {{this.errorMsgLoadingCrate}}</div>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!this.errorNotFound" class="col-12 pb-4 form-bg" novalidate>
+    <div class="d-flex align-items-center">
+      <button type="button" aria-label="volver atrás" class="btn-back" (click)="back()"></button>
+      <h1><span class="fs-1">Detalles de la caja</span></h1>
+    </div>
+    <!-- BARRA LOADING... -->
+    <div *ngIf="loadingCrateData" class="progress" role="progressbar" aria-label="Leyendo registros"
+      aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
+      <div class="progress-bar progress-bar-striped progress-bar-animated w-100">
+        <span class="text-light">leyendo registros...</span>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="mb-3 col">
+        <label for="crateName" class="form-label">*Nombre:</label>
+        <input aria-label="Nombre de la caja" type="text" class="form-control" id="crateName" [ngClass]="{
+                          'is-valid': form.get('name')?.touched && !form.get('name')?.errors,
+                          'is-invalid': form.get('name')?.touched && form.get('name')?.errors
+                      }" placeholder="nombre de la caja" formControlName="name">
+        <div *ngIf="form.get('name')?.errors">
+          <span *ngIf="form.get('name')?.touched && form.get('name')?.hasError('required')"
+            class="fs-6 fst-italic text-danger-emphasis">El nombre es obligatorio</span>
+          <span *ngIf="form.get('name')?.touched && form.get('name')?.hasError('minlength')"
+            class="fs-6 fst-italic text-danger-emphasis">El nombre debe tener un mínimo de
+            {{this.const.Crate.MIN_LENGTH_NAME}}
+            caracteres</span>
+          <span *ngIf="form.get('name')?.touched && form.get('name')?.hasError('maxlength')"
+            class="fs-6 fst-italic text-danger-emphasis">El nombre debe tener un máximo de
+            {{this.const.Crate.MAX_LENGTH_NAME}}
+            caracteres</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="mb-3 col">
+        <label for="description" class="form-label">Desripción:</label>
+        <textarea rows="3" class="form-control" id="description" placeholder="descripción del producto" [ngClass]="{
+                      'is-valid': form.get('description')?.touched && !form.get('description')?.errors,
+                      'is-invalid': form.get('description')?.touched && form.get('description')?.errors
+                  }" formControlName="description"></textarea>
+        <div *ngIf="form.get('description')?.touched && form.get('description')?.errors">
+          <span *ngIf=" form.get('description')?.hasError('maxlength')" class="fs-6 fst-italic text-danger-emphasis">
+            La desripción ha superado los 
+            {{const.Crate.MAX_LENGTH_DESCRIPTION}} 
+            caracteres permitidos</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row mb-3">
+      <!-- STOCK -->
+      <div class="col">
+        <label for="stock" class="form-label">Stock:</label>
+        <div class="input-group">
+          <input type="number" min="0" step="1" class="form-control" id="stock" formControlName="stock" aria-describedby="stockAddon">
+          <span class="input-group-text" id="stockAddon">Uds.</span>
+        </div>
+      </div>
+
+      <!-- PRECIO -->
+      <div class="col">
+        
+        <label for="price" class="form-label">Precio:</label>
+        <div class="input-group">
+          <input type="number" min="0.00" step="0.50" class="form-control" id="price" aria-describedby="priceAddon"
+            [value]="form.get('price')?.value" disabled>
+          <span class="input-group-text" id="priceAddon">€</span>
+        </div>
+      </div>
+      <!-- KILOGRAMS -->
+      <div class="col">
+        <label for="kilograms" min="0.00" step="0.1" class="form-label">Kilos:</label>
+        <div class="input-group">
+          <input type="number" class="form-control" id="kilograms" [value]="form.get('kilograms')?.value" aria-describedby="kgAddon" disabled>
+          <span class="input-group-text" id="kgAddon">Kg.</span>
+        </div>
+      </div>
+
+    </div>
+<!-- SWITCH HABILITAR/DESHABILITAR CAJA -->
+    <div class="mb-3 col">
+      <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" role="switch" id="isActive" 
+            formControlName="isActive">
+          <label class="form-check-label" for="isActive">Habilitar caja</label>
+      </div>
+    </div>
+
+    <div *ngIf="errorUpdatingMsg" class="alert alert-danger alert-dismissible mt-2 animate__animated animate__shakeX"
+      role="alert">
+      <div>{{this.errorUpdatingMsg}}</div>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"
+        (click)="closeError()"></button>
+    </div>
+
+    <div class="d-flex mb-2 mt-2">
+      <button disabled [disabled]="loadingCrateData || updatingCrate || !buttonsEnabled" type="button"
+        class="btn btn-primary align-self-center" (click)="toggleEditMode()">{{disabledControls &&
+        !updatingCrate? "Modificar" : "Cancelar"}}</button>
+
+      <button *ngIf="!disabledControls || updatingCrate" type="submit"
+        class="btn btn-success ms-3 animate__animated animate__bounceIn"
+        [disabled]="this.form.invalid || updatingCrate || !buttonsEnabled">
+        <span *ngIf="!updatingCrate">{{this.form.invalid || updatingCrate ? '✏️ Modifica valores correctos
+          para guardar' :'Confirmar cambios'}}</span>
+        <ng-container *ngIf="updatingCrate">
+          <span class="spinner-border spinner-border-sm pe-2" aria-hidden="true"></span>
+          <span role="status" class="ms-2">Guardando...</span>
+        </ng-container>
+      </button>
+
+      <span *ngIf="showUpdateOk"
+        class="alert alert-success animate__animated animate__bounceInUp text-center mt-2 m-0 ms-2 flex-fill pt-1 pb-1"
+        role="alert">
+        🧺 ¡Caja guardada con éxito! <a [routerLink]="['/home/caja']">volver a la lista.</a>
+      </span>
+    </div>
+  </form>
+
+</div>
+
+<!-- CLIENTES -->
+<div class="container row justify-content-center ms-auto me-auto shadow-lg rounded pt-3 pb-3 mt-4">
+  <div class="text-center fs-4">Ventas</div>
+
+  <div *ngIf="errorMsgLoadingSales" class="alert alert-danger alert-dismissible animate__animated animate__flash m-4"
+    role="alert">
+    <div>😟 {{errorMsgLoadingSales}}</div>
+  </div>
+
+  <div class="table-responsive">
+    <table *ngIf="isLoadingSales || sales.length !== 0" class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Fecha</th>
+          <th scope="col">Cliente</th>
+          <th scope="col">Cantidad</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <!-- PLACEHOLDERS -->
+      <ng-container *ngIf="isLoadingSales">
+        <tr class="placeholder-glow">
+          <td>
+            <p aria-hidden="true">
+              <span class="placeholder col-6"></span>
+            </p>
+          </td>
+          <td>
+            <p aria-hidden="true">
+              <span class="placeholder col-6"></span>
+            </p>
+          </td>
+          <td>
+            <p aria-hidden="true" class="w-100">
+              <span class="placeholder col-6"></span>
+            </p>
+          </td>
+          <td>
+            <p aria-hidden="true">
+              <span class="placeholder col-6"></span>
+            </p>
+          </td>
+          <td>
+            <p aria-hidden="true">
+              <span class="placeholder col-6"></span>
+            </p>
+          </td>
+        </tr>
+      </ng-container>
+      <tbody *ngFor="let sale of sales; let index = index">
+        <tr>
+          <th scope="row">{{index + 1}}</th>
+          <td>
+            <span [ngClass]="{'fst-italic text-secondary': !sale.clientIsActive}">
+              {{sale.saleDateTimeUtz + 'z' | date: 'dd/MM/yyyy'}}
+            </span>
+          </td>
+          <td class="w-100">
+            <a class="link-offset-2 link-underline" 
+              [ngClass]="{
+                'fst-italic text-secondary': !sale.clientIsActive,
+                'link-underline-opacity-10 link-secondary' : !sale.clientIsActive
+              }"
+              [routerLink]="['/home/clientes/detalles', sale.clientId]">{{sale.clientName}} {{sale.clientSurnames}}
+            </a>
+          </td>
+          <td>
+            <span  [ngClass]="{
+              'fst-italic text-secondary' : !sale.clientIsActive,
+            }">{{sale.amount}}</span>
+          </td>
+          <td><button class="btn btn-outline-info btn-sm" type="button" data-bs-toggle="collapse"
+              [attr.data-bs-target]="'#collapse' + sale.saleId" aria-expanded="false" aria-controls="datosCliente">
+              más...
+            </button></td>
+        </tr>
+        <tr>
+          <td colspan="5" class="p-0">
+            <div class="collapse" [attr.id]="'collapse' + sale.saleId">
+              <div class="card card-body w-100 d-flex justify-content-between">
+                <div *ngIf="!sale.clientIsActive" class="fw-bold text-danger fst-italic">
+                  ⚠️ Este cliente está deshabilitado
+                </div>
+                <div>
+                  <span class="fw-bold">Fecha y hora de compra: </span>
+                  {{sale.saleDateTimeUtz | date: 'dd/MM/yyyy HH:mm:ss'}}
+                </div>
+                <div><span class="fw-bold">Dirección cliente: </span>{{sale.clientAddress}}</div>
+                <div><span class="fw-bold">Teléfono cliente: </span>{{sale.clientTelephone}}</div>
+                <div><span class="fw-bold">Email Cliente: </span>{{sale.clientEmail}}</div>
+                <div><span class="fw-bold">Cantidad: </span>{{sale.amount}}</div>
+                <div><span class="fw-bold">Precio: </span>{{sale.cratePrice}}€</div>
+                <div><span class="fw-bold text-decoration-underline">Total:</span> {{sale.totalPrice}}€</div>
+                <div class="w-100">
+                  <!-- botones -->
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="row fst-italic justify-content-evenly gap-3" *ngIf="!isLoadingSales && sales.length > 0">
+    <div class="col">
+      <span class="fs-6 fw-bold">Total de unidades vendidas: </span>
+      <span class="fs-6 ms-1">{{getSalesTotalAmount()}}</span>
+    </div>
+    <div class="col">
+      <span class="fs-6 fw-bold ms-auto">Precio de venta total:</span>
+      <span class="fs-6 ms-1">{{getSalesTotalPrice()}}€</span>
+    </div>
+  </div>
+  
+  <div class="d-flex justify-content-center fst-italic m-4" *ngIf="!isLoadingSales && sales.length === 0">
+    No hay ventas por el momento
+  </div>
+</div> 

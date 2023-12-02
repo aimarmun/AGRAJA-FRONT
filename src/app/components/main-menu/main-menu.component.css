@@ -1,0 +1,16 @@
+.image-container{
+    max-width: 20rem;
+    min-width: 15rem;
+}
+
+.image-container:hover{
+    cursor: pointer;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    background-color: var(--background-green-light);
+    border-radius: 5px;
+}
+
+.text-shadow{
+    text-shadow: 2px 2px 2px #ffffffa0;
+}

@@ -1,0 +1,133 @@
+<div class="container row justify-content-center ms-auto me-auto shadow-lg rounded pt-3 pb-3 position-relative">
+
+    <div *ngIf="this.errorNotFound" class="alert alert-danger alert-dismissible animate__animated animate__flash m-4"
+      role="alert">
+      <div>😟 {{this.errorMsgLoadingCrate}}</div>
+    </div>
+  
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!this.errorNotFound" class="col-12 pb-4 form-bg" novalidate>
+      <div class="d-flex align-items-center">
+        <button type="button" aria-label="volver atrás" class="btn-back" (click)="back()"></button>
+        <h1><span class="fs-1">Añadir nueva caja</span></h1>
+      </div>
+  
+      <div class="row">
+        <div class="mb-3 col">
+          <label for="crateName" class="form-label">*Nombre:</label>
+          <input aria-label="Nombre de la caja" type="text" class="form-control" id="crateName" [ngClass]="{
+                            'is-valid': form.get('name')?.touched && !form.get('name')?.errors,
+                            'is-invalid': form.get('name')?.touched && form.get('name')?.errors
+                        }" placeholder="nombre de la caja" formControlName="name">
+          <div *ngIf="form.get('name')?.errors">
+            <span *ngIf="form.get('name')?.touched && form.get('name')?.hasError('required')"
+              class="fs-6 fst-italic text-danger-emphasis">El nombre es obligatorio</span>
+            <span *ngIf="form.get('name')?.touched && form.get('name')?.hasError('minlength')"
+              class="fs-6 fst-italic text-danger-emphasis">El nombre debe tener un mínimo de
+              {{this.cons.Crate.MIN_LENGTH_NAME}}
+              caracteres</span>
+            <span *ngIf="form.get('name')?.touched && form.get('name')?.hasError('maxlength')"
+              class="fs-6 fst-italic text-danger-emphasis">El nombre debe tener un máximo de
+              {{this.cons.Crate.MAX_LENGTH_NAME}}
+              caracteres</span>
+          </div>
+        </div>
+      </div>
+  
+      <div class="row">
+        <div class="mb-3 col">
+          <label for="description" class="form-label">Desripción:</label>
+          <textarea rows="3" class="form-control" id="description" placeholder="descripción del producto" 
+            [ngClass]="{
+                        'is-valid': form.get('description')?.touched && !form.get('description')?.errors,
+                        'is-invalid': form.get('description')?.touched && form.get('description')?.errors
+                      }" 
+            formControlName="description">
+          </textarea>
+          <div *ngIf="form.get('description')?.touched && form.get('description')?.errors">
+            <span *ngIf=" form.get('description')?.hasError('maxlength')" class="fs-6 fst-italic text-danger-emphasis">
+              La desripción ha superado los 
+              {{this.cons.Crate.MAX_LENGTH_DESCRIPTION}} 
+              caracteres permitidos</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="row mb-3">
+        <!-- STOCK -->
+        <div class="col-12 col-sm">
+          <label for="stock" class="form-label">Stock:</label>
+          <div class="input-group">
+            <input type="number" min="0" step="1" class="form-control" id="stock" formControlName="stock" aria-describedby="stockAddon">
+            <span class="input-group-text" id="stockAddon">Uds.</span>
+          </div>
+        </div>
+  
+        <!-- PRECIO -->
+        <div class="col-12 col-sm">
+          
+          <label for="price" class="form-label">*Precio:</label>
+          <div class="input-group">
+            <input type="number" min="0.00" step="0.50" class="form-control" id="price" aria-describedby="priceAddon"
+              [value]="form.get('price')?.value" formControlName="price"
+              [ngClass]="{
+                'is-valid': form.get('price')?.touched && !form.get('price')?.errors,
+                'is-invalid': form.get('price')?.touched && form.get('price')?.errors
+              }">
+            <span class="input-group-text" id="priceAddon">€</span>
+            <div *ngIf="form.get('price')?.touched && form.get('price')?.errors">
+              <span *ngIf=" form.get('price')?.hasError('min')" class="fs-6 fst-italic text-danger-emphasis">
+                Fija un precio mínimo</span>
+            </div>
+          </div>
+        </div>
+        <!-- KILOGRAMS -->
+        <div class="col-12 col-sm">
+          <label for="kilograms" min="0.00" step="0.1" class="form-label">*Kilos:</label>
+          <div class="input-group">
+            <input type="number" class="form-control" id="kilograms" 
+              [value]="form.get('kilograms')?.value" aria-describedby="kgAddon"
+              formControlName="kilograms"
+              [ngClass]="{
+                'is-valid': form.get('kilograms')?.touched && !form.get('kilograms')?.errors,
+                'is-invalid': form.get('kilograms')?.touched && form.get('kilograms')?.errors
+              }">
+            <span class="input-group-text" id="kgAddon">Kg.</span>
+            <div *ngIf="form.get('kilograms')?.touched && form.get('kilograms')?.errors">
+              <span *ngIf=" form.get('kilograms')?.hasError('min')" class="fs-6 fst-italic text-danger-emphasis">
+                Fija peso mínimo</span>
+            </div>
+          </div>
+        </div>
+  
+      </div>
+  
+      <div *ngIf="errorUpdatingMsg" class="alert alert-danger alert-dismissible mt-2 animate__animated animate__shakeX"
+        role="alert">
+        <div>{{this.errorUpdatingMsg}}</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"
+          (click)="closeError()"></button>
+      </div>
+  
+      <div class="d-flex mb-2 mt-2">
+  
+        <button type="submit" *ngIf="!showAddOk"
+          class="btn btn-success animate__animated animate__bounceIn"
+          [disabled]="this.form.invalid || addingCrate || !buttonsEnabled">
+          <span *ngIf="!addingCrate">{{this.form.invalid || addingCrate ? 
+            '✏️ Añade valores correctos para guardar' : 'Confirmar y añadir'}}
+          </span>
+          <ng-container *ngIf="addingCrate">
+            <span class="spinner-border spinner-border-sm pe-2" aria-hidden="true"></span>
+            <span role="status" class="ms-2">Guardando...</span>
+          </ng-container>
+        </button>
+  
+        <span *ngIf="showAddOk"
+          class="alert alert-success animate__animated animate__bounceInUp text-center mt-2 m-0 ms-2 flex-fill pt-1 pb-1"
+          role="alert">
+          🧺 ¡Caja guardada con éxito! <button type="button" (click)="reset()" class="btn btn-light btn-sm rounded me-1"
+          aria-label="Crear nuevo">crear otra nueva</button> o 
+          <a [routerLink]="['/home/caja']">volver a la lista.</a>
+        </span>
+      </div>
+    </form>

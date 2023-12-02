@@ -1,0 +1,326 @@
+<div class="container row justify-content-center ms-auto me-auto shadow-lg rounded pt-3 pb-3 position-relative">
+
+    <div *ngIf="this.errorNotFound" class="alert alert-danger alert-dismissible animate__animated animate__flash m-4"
+      role="alert">
+      <div>😟 {{this.errorMsgLoadingClient}}</div>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!this.errorNotFound" class="col-12 pb-4 form-bg" novalidate>
+        <div class="d-flex align-items-center">
+          <button type="button" aria-label="volver atrás" class="btn-back" (click)="back()"></button>
+          <h1><span class="fs-1">Detalles del cliente</span></h1>
+        </div>
+
+        <div *ngIf="client && !client.isActive" 
+          class="text-danger fw-bold fst-italic w-100 text-center">
+            ⚠️ Cliente inhabilitado ⚠️
+        </div>
+        <!-- BARRA LOADING... -->
+        <div *ngIf="this.client == undefined" class="progress"
+          role="progressbar" aria-label="Leyendo registros" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
+          <div class="progress-bar progress-bar-striped progress-bar-animated w-100">
+            <span class="text-light">leyendo registros...</span>
+          </div>
+        </div>
+    
+        <div class="row">
+          <div class="mb-3 col">
+            <label for="farmerName" class="form-label">*Nombre:</label>
+            <input type="text" class="form-control" id="farmerName" [ngClass]="{
+                            'is-valid': form.get('name')?.touched && !form.get('name')?.errors,
+                            'is-invalid': form.get('name')?.touched && form.get('name')?.errors
+                        }" placeholder="nombre del cliente" formControlName="name">
+            <div *ngIf="form.get('name')?.errors">
+              <span *ngIf="form.get('name')?.touched && form.get('name')?.hasError('required')"
+                class="fs-6 fst-italic text-danger-emphasis">El nombre es obligatorio</span>
+              <span *ngIf="form.get('name')?.touched && form.get('name')?.hasError('minlength')"
+                class="fs-6 fst-italic text-danger-emphasis">El nombre debe tener un mínimo de
+                {{this.cons.PersonData.MIN_LENGTH_NAME}}
+                caracteres</span>
+              <span *ngIf="form.get('name')?.touched && form.get('name')?.hasError('maxlength')"
+                class="fs-6 fst-italic text-danger-emphasis">El nombre debe tener un máximo de
+                {{this.const.PersonData.MAX_LENGHT_NAME}
+                caracteres</span>
+            </div>
+          </div>
+
+          <div class="mb-3 col">
+            <label for="farmerSurnames" class="form-label">Apellidos:</label>
+            <input type="text" class="form-control" id="farmerSurnames" placeholder="apellidos" [ngClass]="{
+                            'is-valid': form.get('surnames')?.touched && !form.get('surnames')?.errors,
+                            'is-invalid': form.get('surnames')?.touched && form.get('surnames')?.errors
+                        }" formControlName="surnames">
+            <div *ngIf="form.get('surnames')?.errors">
+              <span *ngIf="form.get('surnames')?.touched && form.get('surnames')?.hasError('maxlength')"
+                class="fs-6 fst-italic text-danger-emphasis">Los apellidos deben tener un máximo de
+                {{this.cons.PersonData.MAX_LENGTH_SURNAMES}}
+                caracteres</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="mb-3 col">
+            <label for="farmerDni" class="form-label">*DNI:</label>
+            <input type="text" class="form-control" id="farmerDni" placeholder="DNI" [ngClass]="{
+                            'is-valid': form.get('dni')?.touched && !form.get('dni')?.errors,
+                            'is-invalid': form.get('dni')?.touched && form.get('dni')?.errors
+                        }" formControlName="dni">
+            <div *ngIf="form.get('dni')?.errors">
+              <span *ngIf=" checkError('dni', 'dnivalidator')"
+                class="fs-6 fst-italic text-danger-emphasis">{{form.get('dni')?.errors?.['dnivalidator']}}</span>
+            </div>
+          </div>
+
+          <div class="mb-3 col">
+            <label for="farmerTel" class="form-label">Teléfono:</label>
+            <input type="text" class="form-control" id="farmerTel" placeholder="teléfono" [ngClass]="{
+                            'is-valid': form.get('telephone')?.touched && !form.get('telephone')?.errors,
+                            'is-invalid': form.get('telephone')?.touched && form.get('telephone')?.errors
+                        }" formControlName="telephone">
+            <div *ngIf="form.get('telephone')?.errors">
+              <span *ngIf=" checkError('telephone', 'telvalidator')"
+                class="fs-6 fst-italic text-danger-emphasis">{{form.get('telephone')?.errors?.['telvalidator']}}</span>
+            </div>
+          </div>
+
+          <div class="mb-3 col">
+            <label for="farmerEmail" class="form-label">E-mail:</label>
+            <input type="email" class="form-control" id="farmerEmail" placeholder="email" [ngClass]="{
+                        'is-valid': form.get('email')?.touched && !form.get('email')?.errors,
+                        'is-invalid': form.get('email')?.touched && form.get('email')?.errors
+                    }" formControlName="email">
+            <div *ngIf="form.get('email')?.touched && form.get('email')?.errors">
+              <span *ngIf=" form.get('email')?.hasError('maxlength')" class="fs-6 fst-italic text-danger-emphasis">El email
+                ha superado la longitud máxima</span>
+            </div>
+            <div *ngIf="form.get('email')?.touched && form.get('email')?.errors">
+              <span *ngIf=" form.get('email')?.hasError('email')" class="fs-6 fst-italic text-danger-emphasis">El
+                formato no es correcto</span>
+            </div>
+          </div>
+          
+        </div>
+    
+        <div class="mb-3">
+          <label for="farmerDir" class="form-label">Dirección:</label>
+          <textarea rows="3" class="form-control" id="farmerDir" placeholder="dirección" [ngClass]="{
+                    'is-valid': form.get('address')?.touched && !form.get('address')?.errors,
+                    'is-invalid': form.get('address')?.touched && form.get('address')?.errors
+                }" formControlName="address"></textarea>
+          <div *ngIf="form.get('address')?.touched && form.get('address')?.errors">
+            <span *ngIf=" form.get('address')?.hasError('maxlength')" class="fs-6 fst-italic text-danger-emphasis">La
+              dirección ha superado los
+              {{cons.PersonData.MAX_LENGTH_ADDRESS}} caracteres permitidos</span>
+          </div>
+        </div>
+        
+        <div *ngIf="errorUpdatingMsg" class="alert alert-danger alert-dismissible mt-2 animate__animated animate__shakeX"
+          role="alert">
+          <div>{{this.errorUpdatingMsg}}</div>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"
+            (click)="closeError()"></button>
+        </div>
+<!-- OCULTAR CLIENTE -->
+        <div class="mb-3 col">
+          <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" role="switch" id="isActive" 
+                formControlName="isActive">
+              <label class="form-check-label" for="isActive">Habilitar cliente</label>
+          </div>
+        </div>
+
+        <div class="d-flex mb-2 mt-2">
+          <button disabled [disabled]="this.loadingClientData || updatingClient || !buttonsEnabled" type="button"
+            class="btn btn-primary align-self-center" (click)="toggleEditMode()">{{disabledControls &&
+            !updatingClient? "Modificar" : "Cancelar"}}</button>
+    
+          <button *ngIf="!disabledControls || updatingClient" type="submit"
+            class="btn btn-success ms-3 animate__animated animate__bounceIn"
+            [disabled]="this.form.invalid || updatingClient || !buttonsEnabled">
+            <span *ngIf="!updatingClient">{{this.form.invalid || updatingClient ? '✏️ Modifica valores correctos
+              para guardar' :'Confirmar cambios'}}</span>
+            <ng-container *ngIf="updatingClient">
+              <span class="spinner-border spinner-border-sm pe-2" aria-hidden="true"></span>
+              <span role="status" class="ms-2">Guardando...</span>
+            </ng-container>
+          </button>
+    
+          <span *ngIf="showUpdateOk"
+            class="alert alert-success animate__animated animate__bounceInUp text-center mt-2 m-0 ms-2 flex-fill pt-1 pb-1"
+            role="alert">
+            👨‍👩‍👧‍👦 ¡Guardado con éxito! <a [routerLink]="['/home/clientes']">volver a la lista.</a>
+          </span>
+        </div>
+      </form>
+</div>
+
+<!-- VENTAS y CONTRATOS-->
+<div *ngIf="!loadingClientData" class="container row justify-content-center ms-auto me-auto shadow-lg rounded pt-3 pb-3 mt-4">
+
+    <ul class="nav nav-tabs ms-4 me-4">
+        <li class="nav-item">
+          <a class="nav-link" [ngClass]="{'active' : showSales}" aria-current="ventas" (click)="toggleTable()">Ventas</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [ngClass]="{'active' : showHirings}" aria-current="contratos" (click)="toggleTable()">Contrataciones</a>
+        </li>
+      </ul>
+
+ <!--    <div class="text-center fs-4">Ventas a {{client.name}}</div> -->
+  
+  
+    <div class="table-responsive ps-0 pe-0">
+      <table *ngIf="(showSales  && (isLoadingSales || sales.length !== 0)) || (showHirings &&(isLoadingHirings || hirings !== null))" class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">{{showSales ? 'Producto' : 'Agricultor'}}</th>
+            <th scope="col">{{showSales ? 'Cantidad' : 'Tipo de cultivo'}}</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <!-- PLACEHOLDERS -->
+        <ng-container *ngIf="(isLoadingSales && showSales) || (isLoadingHirings && showHirings) ">
+          <tr class="placeholder-glow">
+            <td>
+              <p aria-hidden="true">
+                <span class="placeholder col-6"></span>
+              </p>
+            </td>
+            <td>
+              <p aria-hidden="true">
+                <span class="placeholder col-6"></span>
+              </p>
+            </td>
+            <td>
+              <p aria-hidden="true">
+                <span class="placeholder col-6"></span>
+              </p>
+            </td>
+            <td>
+              <p aria-hidden="true">
+                <span class="placeholder col-6"></span>
+              </p>
+            </td>
+            <td>
+              <p aria-hidden="true">
+                <span class="placeholder col-6"></span>
+              </p>
+            </td>
+          </tr>
+        </ng-container>
+        <ng-container *ngIf="showSales">
+            <tbody *ngFor="let sale of sales; let index = index">
+              <tr>
+                <th scope="row">{{index + 1}}</th>
+                <td [ngClass]="{
+                    'fst-italic text-secondary': !sale.crateIsActive,
+                    'link-underline-opacity-10' : !sale.crateIsActive
+                  }">{{sale.saleDateTimeUtz + 'z' | date: 'dd/MM/yyyy'}}
+                </td>
+                <td class="w-100">
+                  <a class="link-secondary link-offset-2 link-underline link-underline-opacity-10" [ngClass]="{
+                      'fst-italic text-secondary': !sale.crateIsActive,
+                      'link-underline-opacity-10' : !sale.crateIsActive
+                    }"
+                    [routerLink]="['/home/caja/detalles', sale.crateId]">{{sale.crateName}}
+                  </a>
+                </td>
+                <td [ngClass]="{
+                    'fst-italic text-secondary': !sale.crateIsActive,
+                    'link-underline-opacity-10' : !sale.crateIsActive
+                  }">
+                  {{sale.amount}}
+                </td>
+                <td><button class="btn btn-outline-info btn-sm" type="button" data-bs-toggle="collapse"
+                    [attr.data-bs-target]="'#collapse' + sale.saleId" aria-expanded="false" aria-controls="collapseExample">
+                    más...
+                  </button></td>
+              </tr>
+              <tr>
+                <td colspan="5" class="p-0">
+                  <div class="collapse" [attr.id]="'collapse' + sale.saleId">
+                    <div class="card card-body w-100 d-flex justify-content-between">
+                      <div *ngIf="!sale.crateIsActive" class="fw-bold text-danger fst-italic">Caja deshabilitada</div>
+                      <div><span class="fw-bold">Fecha de venta: </span>{{sale.saleDateTimeUtz  + 'z' | date: 'dd/MM/yyyy HH:mm' }}</div>
+                      <div><span class="fw-bold">Producto: </span>{{sale.crateName}}</div>
+                      <div><span class="fw-bold">Cantidad: </span>{{sale.amount}}</div>
+                      <div><span class="fw-bold">Precio unidad: </span>{{sale.cratePrice}}</div>
+                      <div><span class="fw-bold">TOTAL: </span>{{sale.totalPrice}}€</div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+        </ng-container>
+
+        <ng-container *ngIf="showHirings && hirings !== null">
+            <tbody *ngFor="let hiring of hirings; let index = index">
+              <tr>
+                <th scope="row">{{index + 1}}</th>
+                <td [ngClass]="{
+                    'fst-italic text-secondary': !hiring.farmerIsActive,
+                    'link-underline-opacity-10' : !hiring.farmerIsActive
+                  }">{{hiring.saleDateTimeUtc + 'z' | date: 'dd/MM/yyyy'}}
+                </td>
+                <td class="w-100">
+                  <a class="link-secondary link-offset-2 link-underline link-underline-opacity-10" 
+                    [ngClass]="{
+                      'fst-italic text-secondary': !hiring.farmerIsActive,
+                      'link-underline-opacity-10' : !hiring.farmerIsActive
+                    }"
+                    [routerLink]="['/home/agro/agricultor', hiring.farmerId]">{{hiring.farmerName}}
+                  </a>
+                </td>
+                <td [ngClass]="{
+                    'fst-italic text-secondary': !hiring.farmerIsActive,
+                    'link-underline-opacity-10' : !hiring.farmerIsActive
+                  }">{{hiring.cropName}}
+                </td>
+                <td><button class="btn btn-outline-info btn-sm" type="button" data-bs-toggle="collapse"
+                    [attr.data-bs-target]="'#collapse' + hiring.farmerId" aria-expanded="false" aria-controls="collapseExample">
+                    más...
+                  </button></td>
+              </tr>
+              <tr>
+                <td colspan="5" class="p-0">
+                  <div class="collapse" [attr.id]="'collapse' + hiring.farmerId">
+                    <div class="card card-body w-100 d-flex justify-content-between">
+                      <div *ngIf="!hiring.farmerIsActive" class="fw-bold text-danger fst-italic">⚠️ Agricultor inactivo</div>
+                      <div><span class="fw-bold">Fecha de contrato: </span>{{hiring.saleDateTimeUtc  + 'z' | date: 'dd/MM/yyyy HH:mm' }}</div>
+                      <div><span class="fw-bold">Nombre del agricultor/a: </span>{{hiring.farmerName}} {{hiring.farmerSurnames}}</div>
+                      <div><span class="fw-bold">Ciudad: </span>{{hiring.farmerCity}}</div>
+                      <div><span class="fw-bold">Tipo de cultivo: </span>{{hiring.cropName}}</div>            
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+        </ng-container>
+
+      </table>
+    </div>
+
+    <div class="row fst-italic justify-content-evenly gap-3" *ngIf="showSales && sales.length > 0">
+      <div class="col">
+        <span class="fs-6 fw-bold ms-auto">Precio de venta total del cliente:</span>
+        <span class="fs-6 ms-1">{{getSalesTotalPrice()}}€</span>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-center fst-italic m-4" *ngIf="!isLoadingSales && sales.length === 0 && showSales">
+      Este cliente no tiene ventas asociadas
+    </div>
+
+    <div class="d-flex justify-content-center fst-italic m-4" *ngIf="!isLoadingHirings && hirings === null && showHirings">
+      Este cliente no tiene contratos asociados
+    </div>
+
+    <div *ngIf="((errorMsgLoadSales !== '' || errorMsgLoadHirings !== null) && errorNotFound)" class="alert alert-danger alert-dismissible animate__animated animate__flash m-4 sticky-bottom"
+        role="alert">
+    <div>😟 {{errorMsgLoadSales}}</div>
+  </div>
+
+</div>

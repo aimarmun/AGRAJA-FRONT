@@ -1,0 +1,28 @@
+/* Works on Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(66, 45%, 87%) hsl(174, 29%, 66%)orange;
+  }
+  
+  /* Works on Chrome, Edge, and Safari */
+  *::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  *::-webkit-scrollbar-track {
+    background: hsl(174, 29%, 66%);
+  }
+  
+  *::-webkit-scrollbar-thumb {
+    background-color: hsl(66, 45%, 87%);
+    border-radius: 20px;
+    border: 3px solid hsl(174, 29%, 66%);
+  }
+
+.card div .card__crate-content:hover{
+    background-color: hsla(174, 29%, 66%, 0.607);
+}
+
+.bg-sale-btn{
+  background-color: hsla(174, 29%, 66%, 0.393);
+}

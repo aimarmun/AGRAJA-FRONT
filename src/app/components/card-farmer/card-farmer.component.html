@@ -1,0 +1,22 @@
+<ng-container *ngIf="this.farmer && this.cropTypes && this.cities">
+  <div class="card mt-2 mb-2 position-relative">
+    <img [ngClass]="{
+        'img-no-loaded': !this.imgLoaded,
+        'img-farmer-inactive': !farmer.isActive
+      }" [src]="this.imgSrc" class="card-img-top" alt="{{this.imgAlt}}"
+      (load)="imgCardLoaded()">
+    <div *ngIf="!farmer.isActive" class="position-absolute top-0 mt-4 w-100 text-center">
+      ⚠️ Agricultor inactivo ⚠️
+    </div>
+    <div class="card-body">
+      <h5 class="card-title text-truncate">{{this.farmer.name}} {{this.farmer.surnames}}</h5>
+      <p class="card-text"><span class="fw-bold">Tipo de cultivo: </span><span>{{this.cropTypeName}}</span></p>
+      <p class="card-text"><span class="fw-bold">Ciudad: </span><span>{{this.cityName}}</span></p>
+      <nav class="d-flex justify-content-between">
+        <a [routerLink]="['/home/agro/agricultor', this.farmer.id]" class="btn btn-primary me-1">Detalles</a>
+         <app-add-client-modal [farmer]="farmer" (onnewhiring)="onNewHiring()" 
+          [badgetext]="badgeText"></app-add-client-modal>
+      </nav>
+    </div>
+  </div>
+</ng-container> 
