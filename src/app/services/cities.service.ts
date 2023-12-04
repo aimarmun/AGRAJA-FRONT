@@ -10,16 +10,22 @@ import { lastValueFrom } from 'rxjs';
 
 export class CitiesService {
   private readonly END_POINT: string;
+  private cities: City[];
 
   constructor(
     private config: ConfigService, 
     private http: HttpClient) 
   {
     this.END_POINT = "/api/City";
+    this.cities = [];
   }
 
   async getAllAsync(): Promise<City[]>{
+    if(this.cities.length > 0)
+      return this.cities;
+    
     const url = await this.config.baseUrl(this.END_POINT);
-    return lastValueFrom(this.http.get<City[]>(url))
+    this.cities = [... await lastValueFrom(this.http.get<City[]>(url))];
+    return this.cities;
   }
 }

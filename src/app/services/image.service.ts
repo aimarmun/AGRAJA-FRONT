@@ -8,12 +8,12 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { lastValueFrom, tap, Subject } from 'rxjs';
+import { lastValueFrom, tap, Observable, firstValueFrom } from 'rxjs';
 
 interface CachedImage {
   urlImg: string;
-  blob?: Blob | undefined;
-  cachedObserver$: Subject<CachedImage[]>;
+  blob: Blob | null;
+  observer: Observable<Blob>
 }
 
 @Injectable({
@@ -21,7 +21,7 @@ interface CachedImage {
 })
 
 export class ImageService {
-  private _cachedImages: CachedImage[] ;
+  private _cachedImages: CachedImage[];
 
   constructor(private http: HttpClient) { 
     this._cachedImages = [];
@@ -29,46 +29,49 @@ export class ImageService {
 
   async getImage(urlImg: string): Promise<string> {
     const index = this._cachedImages.findIndex(image => image.urlImg === urlImg);
+    
     if (index > -1) {
-      console.log('la imagen está en la caché', urlImg)
+     // console.log('la imagen está en la caché', urlImg)
       const image = this._cachedImages[index];
+      
+      if(image.blob){
+       // console.log('cache de imangen completo', urlImg);
+        return URL.createObjectURL(image.blob);
+      }
+      
+      console.log('Esperando a la caché de la imange', urlImg);
+     // const start = new Date();
+      const blob = await firstValueFrom(image.observer)
+    //  const end = new Date();
+    //  console.log(urlImg, (new Date(end.getTime() - start.getTime()).getMilliseconds()));
 
-      const observable = image.cachedObserver$.asObservable();
-      observable.pipe(tap(blob => console.log('imagen cargada', blob))).subscribe();
-      
-      console.log('Esperando a la suscripción')
-      await lastValueFrom(observable)
-      console.log('Suscripción lanzada**');
-      
-      return URL.createObjectURL(image.blob!);
+      return URL.createObjectURL(blob);
     }
 
-    console.log('imagen no cacheada', urlImg)
+    //console.log('imagen no cacheada', urlImg)
     const observable = this.http.get(urlImg, { responseType: 'blob'});
-    this.newImageCached(urlImg);
+    this.newImageCached(urlImg, observable);
 
     observable.pipe(
       tap(blob => {
-        console.log('cacheando imagen', urlImg);
+       // console.log('cacheando imagen', urlImg);
         this.checkAndCaheImage(urlImg, blob);
       })
       ).subscribe();
-    
 
     return URL.createObjectURL(await lastValueFrom(observable));
   }
     
-  private newImageCached(urlImg: string) {
-    const imgCached: CachedImage = { urlImg, cachedObserver$: new Subject<CachedImage[]> };
+  private newImageCached(urlImg: string, observable: Observable<Blob>) {
+    const imgCached: CachedImage = { urlImg, blob: null, observer: observable };
     this._cachedImages.push(imgCached);
   }
 
   private checkAndCaheImage(urlImg: string, blob: Blob): void {
     const index = this._cachedImages.findIndex(image => image.urlImg === urlImg);
     if (index > -1) {
-    //  console.log('next del Subject')
+    //  console.log('Imagen cacheada', urlImg)
       this._cachedImages[index].blob = blob;
-      this._cachedImages[index].cachedObserver$.next(this._cachedImages);
     }
   }
 

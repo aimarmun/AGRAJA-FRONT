@@ -20,14 +20,13 @@
     </div>
 </form>
 
-
-<ng-container *ngIf="this.loading">
+@if (this.loading) {
     <div class="row justify-content-evenly">
         <div *ngFor="let i of this.placeHoldersItems" class="col">
             <app-card-farmer-placeholder></app-card-farmer-placeholder>
         </div>
     </div>
-</ng-container>
+}
 
 <ng-container *ngIf="this.farmers.length > 0 && !this.loading; else elseBlockNoFarmers">
     <section

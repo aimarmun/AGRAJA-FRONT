@@ -10,13 +10,20 @@ import { HttpClient } from '@angular/common/http';
 
 export class PayOptionsService {
   private END_POINT: string;
+  private payOptions: PayOption[];
+
   constructor(private configService: ConfigService,
     private http: HttpClient) { 
     this.END_POINT = '/api/PayOption'
+    this.payOptions = [];
   }
 
   async getAll(): Promise<PayOption[]> {
+    if(this.payOptions.length > 0)
+      return this.payOptions;
+
     const url = await this.configService.baseUrl(this.END_POINT);
-    return  lastValueFrom(this.http.get<PayOption[]>(url));
+    this.payOptions = [...await lastValueFrom(this.http.get<PayOption[]>(url))];
+    return  this.payOptions;
   }
 }

@@ -10,16 +10,21 @@ import { HttpClient } from '@angular/common/http';
 export class CropTypesService {
   
   private readonly END_POINT: string;
+  private cropTypes: CropType[];
 
   constructor(
     private config: ConfigService, 
     private http: HttpClient) { 
     this.END_POINT = "/api/CropType";
+    this.cropTypes = [];
   }
 
   async getAllAsync(): Promise<CropType[]>{
+    if(this.cropTypes.length > 0)
+      return this.cropTypes;
+
     const url = await this.config.baseUrl(this.END_POINT);
-    console.log('Dirección GetAllCropTypes: ', url);
-    return lastValueFrom(this.http.get<CropType[]>(url));
+    this.cropTypes = [...await lastValueFrom(this.http.get<CropType[]>(url))];
+    return this.cropTypes;
   }
 }

@@ -86,11 +86,12 @@ export class CardFarmerComponent {
       const imgUrl = 'assets/images/agro/' + crop?.name.toLowerCase() + '.jpg'
         || imgSrc;
       this.imgAlt = crop?.name || imgAlt;
-      //console.log('imagen cultivo', this.farmer.name, this.imgSrc, this.imgAlt)
-      this.imgSrc = imgUrl; //await this.imageService.getImage(imgUrl);
+      this.imgSrc = imgUrl; // con esta línea evitamos que aparezca el icono de imagen rota
+      this.imgSrc = await this.imageService.getImage(imgUrl);
       return;
     }
     this.imgSrc = imgSrc;
     this.imgAlt = imgAlt;
+    console.log('image src', this.imgSrc)
   }
 }

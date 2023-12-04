@@ -1,10 +1,12 @@
 <ng-container *ngIf="this.farmer && this.cropTypes && this.cities">
   <div class="card mt-2 mb-2 position-relative">
-    <img [ngClass]="{
-        'img-no-loaded': !this.imgLoaded,
-        'img-farmer-inactive': !farmer.isActive
-      }" [src]="this.imgSrc" class="card-img-top" alt="{{this.imgAlt}}"
-      (load)="imgCardLoaded()">
+
+      <img [ngClass]="{
+          'img-no-loaded': !this.imgLoaded,
+          'img-farmer-inactive': !farmer.isActive
+        }" [src]="this.imgSrc" class="card-img-top" alt="{{this.imgAlt}}"
+        (load)="imgCardLoaded()">
+
     <div *ngIf="!farmer.isActive" class="position-absolute top-0 mt-4 w-100 text-center">
       ⚠️ Agricultor inactivo ⚠️
     </div>
