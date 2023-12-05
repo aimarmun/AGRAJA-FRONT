@@ -20,30 +20,38 @@
     </div>
 </form>
 
-@if (this.loading) {
+@if (loading) {
     <div class="row justify-content-evenly">
-        <div *ngFor="let i of this.placeHoldersItems" class="col">
+        <div *ngFor="let i of placeHoldersItems" class="col">
             <app-card-farmer-placeholder></app-card-farmer-placeholder>
         </div>
     </div>
 }
 
-<ng-container *ngIf="this.farmers.length > 0 && !this.loading; else elseBlockNoFarmers">
+@if(farmers.length > 0 && !loading){
+    
     <section
         class="row ms-auto me-auto row-cols-md-2 row-cols-lg-3 row-cols-xl-3 row-cols-xxl-4 row-cols-sm-1 position-relative">
-        <article *ngFor="let farmer of this.farmers; let index = index; let last = last"
-            class="col d-flex justify-content-center">
-            <app-card-farmer [farmer]="farmer" [cities]="this.cities" [cropTypes]="this.cropTypes"></app-card-farmer>
-        </article>
+        @for(farmer of farmers; track farmer.id){
+            <article
+                class="col d-flex justify-content-center">
+                @defer (on viewport){
+                    <app-card-farmer [farmer]="farmer" [cities]="cities" [cropTypes]="cropTypes"></app-card-farmer>
+                }
+                @placeholder{
+                    <app-card-farmer-placeholder></app-card-farmer-placeholder>
+                }
+            </article>
+        }
     </section>
-</ng-container>
-<ng-template #elseBlockNoFarmers>
-    <div *ngIf="!this.loading" class="w-100 text-center mt-4 me-4 fst-italic">🫥 No se han encontrado agricultores</div>
-</ng-template>
+}
+@else{
+    <div *ngIf="!loading" class="w-100 text-center mt-4 me-4 fst-italic">🫥 No se han encontrado agricultores</div>
+}
 
-<div *ngIf="this.lastError" class="alert alert-danger alert-dismissible animate__animated animate__flash m-4"
+<div *ngIf="lastError" class="alert alert-danger alert-dismissible animate__animated animate__flash m-4"
     role="alert">
-    <div>😟 {{this.lastError}}</div>
+    <div>😟 {{lastError}}</div>
 </div>
 
 <button aria-label="Añadir granjero" type="button"

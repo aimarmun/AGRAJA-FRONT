@@ -8,12 +8,11 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { lastValueFrom, tap, Observable, firstValueFrom } from 'rxjs';
+import { lastValueFrom, tap, Observable, firstValueFrom, Subscription, Subject, takeUntil } from 'rxjs';
 
 interface CachedImage {
   urlImg: string;
   blob: Blob | null;
-  observer: Observable<Blob>
 }
 
 @Injectable({
@@ -31,48 +30,42 @@ export class ImageService {
     const index = this._cachedImages.findIndex(image => image.urlImg === urlImg);
     
     if (index > -1) {
-     // console.log('la imagen está en la caché', urlImg)
+      console.log('la imagen está en la caché', urlImg)
       const image = this._cachedImages[index];
       
-      if(image.blob){
-       // console.log('cache de imangen completo', urlImg);
-        return URL.createObjectURL(image.blob);
-      }
-      
-      console.log('Esperando a la caché de la imange', urlImg);
-     // const start = new Date();
-      const blob = await firstValueFrom(image.observer)
-    //  const end = new Date();
-    //  console.log(urlImg, (new Date(end.getTime() - start.getTime()).getMilliseconds()));
+      await this.waitForCacheEnds(image);
 
-      return URL.createObjectURL(blob);
+      return URL.createObjectURL(image.blob!);
     }
 
     //console.log('imagen no cacheada', urlImg)
     const observable = this.http.get(urlImg, { responseType: 'blob'});
-    this.newImageCached(urlImg, observable);
-
+    
     observable.pipe(
       tap(blob => {
-       // console.log('cacheando imagen', urlImg);
         this.checkAndCaheImage(urlImg, blob);
       })
       ).subscribe();
-
+    this.newImageCached(urlImg);
     return URL.createObjectURL(await lastValueFrom(observable));
   }
-    
-  private newImageCached(urlImg: string, observable: Observable<Blob>) {
-    const imgCached: CachedImage = { urlImg, blob: null, observer: observable };
+
+  private async waitForCacheEnds(image: CachedImage) {
+    while (image.blob === null) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+  }
+
+  private newImageCached(urlImg: string) {
+    const imgCached: CachedImage = { urlImg, blob: null };
     this._cachedImages.push(imgCached);
   }
 
   private checkAndCaheImage(urlImg: string, blob: Blob): void {
     const index = this._cachedImages.findIndex(image => image.urlImg === urlImg);
     if (index > -1) {
-    //  console.log('Imagen cacheada', urlImg)
-      this._cachedImages[index].blob = blob;
+      const img = this._cachedImages[index];
+      img.blob = blob;
     }
   }
-
 }

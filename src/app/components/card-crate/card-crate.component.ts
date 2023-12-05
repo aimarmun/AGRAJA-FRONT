@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { Crate, CrateSaleRequest } from 'src/app/interfaces/crate.interface';
 import { PayOption } from 'src/app/interfaces/pay-option.interface';
+import { ImageService } from 'src/app/services/image.service';
 
 @Component({
   selector: 'app-card-crate',
@@ -14,15 +15,20 @@ export class CardCrateComponent {
   public imgSrc: string;
   public imgAlt: string;
   public unitsInCart: number;
+  private readonly IMG_SRC = '/assets/images/caja/caja-general.jpg';
 
-  constructor(){
+  constructor(private imgService: ImageService){
     this.imgSrc = "";
     this.imgAlt = "";
     this.payOptions = []
     this.imgLoaded = false;
-    this.imgSrc = '/assets/images/caja/caja-general.jpg'
+    this.imgSrc = this.IMG_SRC;
     this.imgAlt = 'Imagen de una agricultora sugentan una caja con productos'
     this.unitsInCart = 0;
+  }
+
+  async ngOnInit(): Promise<void> {
+    this.imgSrc = await this.imgService.getImage(this.IMG_SRC);
   }
 
   addUnitToCart(): void{
