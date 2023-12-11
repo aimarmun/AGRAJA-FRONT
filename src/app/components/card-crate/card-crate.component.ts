@@ -18,12 +18,12 @@ export class CardCrateComponent {
   private readonly IMG_SRC = '/assets/images/caja/caja-general.jpg';
 
   constructor(private imgService: ImageService){
-    this.imgSrc = "";
+    this.imgSrc = imgService.DUMMY_IMAGE;
     this.imgAlt = "";
     this.payOptions = []
     this.imgLoaded = false;
     this.imgSrc = this.IMG_SRC;
-    this.imgAlt = 'Imagen de una agricultora sugentan una caja con productos'
+    this.imgAlt = 'Imagen de una agricultora sugetan una caja con productos'
     this.unitsInCart = 0;
   }
 

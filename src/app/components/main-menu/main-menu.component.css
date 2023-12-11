@@ -1,6 +1,8 @@
 .image-container{
     max-width: 20rem;
     min-width: 15rem;
+    padding-top: 8px;
+    padding-bottom: 8px;
 }
 
 .image-container:hover{
@@ -13,4 +15,8 @@
 
 .text-shadow{
     text-shadow: 2px 2px 2px #ffffffa0;
+}
+
+img{
+    width: 20rem;
 }

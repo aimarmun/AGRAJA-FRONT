@@ -2,13 +2,13 @@
     <div class="row justify-content-evenly">
         <div [routerLink]="['/home/agro']" class="col container d-flex justify-content-center image-container">
             <div class="position-relative h-100 w-100">
-                <img src="../../../assets/images/agraja_agro.jpg" class="rounded img-fluid" alt="Agraja Agro">
+                <img [src]="agroImgSrc" class="rounded img-fluid" alt="Agraja Agro">
                 <span class="position-absolute button-0 start-0 fs-3 fw-bold text-light w-100 text-center text-shadow">AGRO</span>
             </div>
         </div>
         <div [routerLink]="['/home/caja']" class="col-12 col-sm container d-flex justify-content-center image-container gy-4 gy-sm-0">
             <div class="position-relative h-100 w-100">
-                <img src="../../../assets/images/agraja_caja.jpg" class="rounded img-fluid" alt="Agraja Caja">
+                <img [src]="cajaImgSrc" class="rounded img-fluid" alt="Agraja Caja">
                 <span class="position-absolute top-0 start-0 fs-3 fw-bold text-light w-100 text-center text-shadow">CAJA</span>
             </div>
         </div>
