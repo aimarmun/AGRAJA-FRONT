@@ -6,7 +6,7 @@ import { AppComponent } from './app.component';
 import { MainMenuComponent } from './components/main-menu/main-menu.component';
 import { AgroListComponent } from './components/agro-list/agro-list.component';
 import { CajaListComponent } from './components/caja-list/caja-list.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { CardFarmerComponent } from './components/card-farmer/card-farmer.component';
 import { CardFarmerPlaceholderComponent } from './components/card-farmer-placeholder/card-farmer-placeholder.component';
 import { FarmerDetailsComponent } from './components/farmer-details/farmer-details.component';
@@ -21,6 +21,7 @@ import { ClientListComponent } from './components/client-list/client-list.compon
 import { ClientDetailsComponent } from './components/client-details/client-details.component';
 import { DateTimePipe } from './pipes/date-time.pipe';
 import { ClientAddComponent } from './components/client-add/client-add.component';
+import { authInterceptor } from './interceptors/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -49,7 +50,15 @@ import { ClientAddComponent } from './components/client-add/client-add.component
     FormsModule,
     ReactiveFormsModule
   ],
-  providers: [],
+  providers: [
+    provideHttpClient(
+      withInterceptors(
+        [
+           authInterceptor
+        ]
+      )
+    )
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

@@ -4,6 +4,7 @@ import { Component } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router} from '@angular/router';
 import { Client } from 'src/app/interfaces/client.interface';
+import { AuthService } from 'src/app/services/auth.service';
 import { BreadcrumbService } from 'src/app/services/breadcrumb.service';
 import { ClientsService } from 'src/app/services/clients.service';
 import { SettingKey, UserSettingsService } from 'src/app/services/user-settings.service';
@@ -24,13 +25,15 @@ export class ClientListComponent {
   public currentUrl: string;
   public showHidden: boolean;
   public dniOrNameFilter: string;
+  public isAdmin: boolean;
 
   constructor(private breadcrumbService: BreadcrumbService,
     private activeRoute: ActivatedRoute,
     private clientsService: ClientsService,
     private routing: Router,
     private location: Location,
-    private userSettings: UserSettingsService){
+    private userSettings: UserSettingsService,
+    private authService: AuthService){
     this.clients = []
     this.errorMsg = null;
     this.isLoadingClients = true;
@@ -46,6 +49,7 @@ export class ClientListComponent {
     );
     this.loadingCounter = 0;
     this.currentUrl = '';
+    this.isAdmin = false;
   }
 
   async ngOnInit(): Promise <void> {
@@ -57,6 +61,7 @@ export class ClientListComponent {
     else
       await this.loadClientsByDniOrName();
     
+    this.isAdmin = this.authService.isAdmin();
   }
 
   async onShowHiddenChange(): Promise<void> {

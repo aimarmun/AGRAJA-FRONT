@@ -10,6 +10,7 @@ import { CrateAddComponent } from './components/crate-add/crate-add.component';
 import { ClientListComponent } from './components/client-list/client-list.component';
 import { ClientDetailsComponent } from './components/client-details/client-details.component';
 import { ClientAddComponent } from './components/client-add/client-add.component';
+import { LoginComponent } from './components/login/login.component';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: '/home' },
@@ -22,7 +23,8 @@ const routes: Routes = [
   { path: 'home/agro/nuevo', pathMatch: 'full', component: FarmerAddComponent },
   { path: 'home/clientes', pathMatch: 'full', component: ClientListComponent },
   { path: 'home/clientes/detalles/:id', component: ClientDetailsComponent },
-  { path: 'home/clientes/nuevo', pathMatch: 'full', component: ClientAddComponent},
+  { path: 'home/clientes/nuevo', pathMatch: 'full', component: ClientAddComponent },
+  { path: 'home/login', pathMatch: 'full', component: LoginComponent },
   { path: "**", redirectTo: "/home" }
 ];
 

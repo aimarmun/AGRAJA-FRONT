@@ -98,8 +98,10 @@
       </div>
 </div>
 
-<button aria-label="Añadir cliente" type="button"
-    class="btn btn-danger btn-lg fixed-bottom ms-auto rounded-circle btn-add"
-    [ngClass]="{'animate__animated animate__rotateOut animate__faster': showButtonAnim}"
-    (click)="showButtonAnim = true" (animationend)="goAddClient()">
-</button>
+@if(isAdmin){
+  <button aria-label="Añadir cliente" type="button"
+      class="btn btn-danger btn-lg fixed-bottom ms-auto rounded-circle btn-add"
+      [ngClass]="{'animate__animated animate__rotateOut animate__faster': showButtonAnim}"
+      (click)="showButtonAnim = true" (animationend)="goAddClient()">
+  </button>
+}
