@@ -35,4 +35,12 @@ export class AppComponent {
         this.route.navigateByUrl('/home/login');
       });
     }
+
+    isLogged(): boolean{
+      return this.authService.isLogged();
+    }
+
+    getUserName(): string | null {
+      return this.authService.getUser()?.name!;
+    }
 }
