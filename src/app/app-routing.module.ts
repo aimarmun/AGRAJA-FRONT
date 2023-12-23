@@ -11,6 +11,7 @@ import { ClientListComponent } from './components/client-list/client-list.compon
 import { ClientDetailsComponent } from './components/client-details/client-details.component';
 import { ClientAddComponent } from './components/client-add/client-add.component';
 import { LoginComponent } from './components/login/login.component';
+import { authGuard } from './guards/auth.guard';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: '/home' },
@@ -18,7 +19,7 @@ const routes: Routes = [
   { path: 'home/agro', pathMatch: 'full', component: AgroListComponent },
   { path: 'home/caja', component: CajaListComponent },
   { path: 'home/caja/detalles/:id', component: CrateDetailsComponent }, 
-  { path: 'home/caja/nueva', component: CrateAddComponent },
+  { path: 'home/caja/nueva', canActivate: [authGuard], component: CrateAddComponent },
   { path: 'home/agro/agricultor/:id', component: FarmerDetailsComponent },
   { path: 'home/agro/nuevo', pathMatch: 'full', component: FarmerAddComponent },
   { path: 'home/clientes', pathMatch: 'full', component: ClientListComponent },

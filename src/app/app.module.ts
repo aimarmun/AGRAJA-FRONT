@@ -22,6 +22,7 @@ import { ClientDetailsComponent } from './components/client-details/client-detai
 import { DateTimePipe } from './pipes/date-time.pipe';
 import { ClientAddComponent } from './components/client-add/client-add.component';
 import { authInterceptor } from './interceptors/auth.interceptor';
+import { LoginComponent } from './components/login/login.component';
 
 @NgModule({
   declarations: [

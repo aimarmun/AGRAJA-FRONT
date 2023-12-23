@@ -1,1 +1,77 @@
-<p>login works!</p>
+<div class="w-100 h-100 justify-content-between">
+    <div class="card ms-auto me-auto mt-auto mb-auto">
+        <img class="card-img-top" src="../assets/agraja_logo.svg" alt="Card image cap">
+        <div class="card-body">
+            @if(!user){
+                <form [formGroup]="form" (ngSubmit)="onSubmit()">
+                    <!-- Usuario -->
+                    <div class="col">
+                        <label for="user" class="form-label">Usuario</label>
+                        <div class="input-group">
+                            <span class="input-group-text" id="userAddon">
+                                <img class="m-auto" src="../assets/images/person-fill.svg" alt="usuario">
+                            </span>
+                            <input type="text" class="form-control" id="user" aria-describedby="userAddon"
+                                formControlName="user">
+                        </div>
+                    </div>
+
+                    <!-- Contraseña -->
+                    <div class="col mt-2">
+                        <label for="password" class="form-label">Contraseña</label>
+                        <div class="input-group">
+                            <span class="input-group-text" id="passAddon">
+                                <img class="m-auto" src="../assets/images/key-fill.svg" alt="contraseña">
+                            </span>
+                            <input type="password" class="form-control" id="password" aria-describedby="passAddon"
+                                formControlName="password">
+                        </div>
+                    </div>
+
+                    <div class="form-check mt-2">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"
+                            formControlName="save">
+                        <label class="form-check-label" for="flexCheckDefault">
+                            Recordarme
+                        </label>
+                    </div>
+
+                    @if(errorMsg){
+                    <div class="w-100">
+                        <span class="fst-italic text-danger">{{errorMsg}}</span>
+                    </div>
+                    }
+
+                    <div class="form-group w-100 mt-4">
+                        <button type="submit" class="btn btn-success w-100" [disabled]="!form.valid">
+                            <span>Entrar</span>
+                            @if(isLoading) {
+                            <span class="spinner-border spinner-border-sm pe-2 ms-2" aria-hidden="true"></span>
+                            }
+                        </button>
+                    </div>
+                </form>
+            } @else {
+                <div class="col">
+                    <label for="userL" class="form-label">Usuario</label>
+                    <div class="input-group">
+                        <span class="input-group-text" id="userAddonL">
+                            <img class="m-auto" src="../assets/images/person-fill.svg" alt="usuario">
+                        </span>
+                        <input type="text" class="form-control" id="userL" aria-describedby="userAddonL"
+                            disabled [value]="user.name">
+                    </div>
+                </div>
+
+                <div class="form-group w-100 mt-4">
+                    <button class="btn btn-success w-100" (click)="onExit()">
+                        <span>SALIR</span>
+                        @if(isLoading) {
+                        <span class="spinner-border spinner-border-sm pe-2 ms-2" aria-hidden="true"></span>
+                        }
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>

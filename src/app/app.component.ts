@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { BreadcrumbService } from './services/breadcrumb.service';
 import { Breadcrumb } from './interfaces/breadcrumb.interface';
+import { AuthService } from './services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -14,7 +16,9 @@ export class AppComponent {
   public actualMenu: string;
 
   constructor(
-    private breadcrumbService: BreadcrumbService){
+    private breadcrumbService: BreadcrumbService,
+    private authService: AuthService,
+    private route: Router){
       this.collapse = true;
       this.breadcrumbs = []
       this.actualMenu = '';
@@ -24,6 +28,11 @@ export class AppComponent {
       this.breadcrumbService.suscribe(b => {
          this.breadcrumbs = [...b];
          this.actualMenu = this.breadcrumbs.at(1)?.label || '';
-    })
-  }
+      })
+
+      this.authService.suscribeExp(()=>{
+        console.log('Sesión caducada');
+        this.route.navigateByUrl('/home/login');
+      });
+    }
 }
