@@ -125,15 +125,15 @@ export class AuthService {
     this.intervalId = setInterval(async ()=> {
       // * le quitamos 5 segundos para no darle tiempo a que caduque el token
       const fiveSeconds = 5;
-      if(Math.floor(((new Date).getTime() / 1000)- fiveSeconds) >= this.user?.exp! || 0){
+      if(Math.floor(((new Date).getTime() / 1000) - fiveSeconds) >= this.user?.exp! || 0){
         clearInterval(this.intervalId);
+        console.log('token expirado')
         try {
           await this.refreshToken();
         } catch (error) {
           console.log('Error al refrescar token', error)
           this.emitTimeExp();
-          localStorage.removeItem('api-token');
-          this.user = null;
+          this.logoOff();
         }
       }
     }, 1000);
@@ -179,6 +179,7 @@ export class AuthService {
     this.user = null;
     this.jwtToken = { token: '', refreshToken: '' };
     localStorage.removeItem('api-token');
+    sessionStorage.removeItem('api-token');
   }
 
   private isTokenInLocalStorage(): boolean {

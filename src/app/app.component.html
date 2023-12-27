@@ -11,39 +11,36 @@
           'animate__animated animate__fadeInDown text-center': !collapse
         }">
       @if(isLogged()){
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link fs-6 ms-2 me-2" [routerLink]="['/home/agro']" [ngClass]="{
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link fs-6 ms-2 me-2" [routerLink]="['/home/agro']" [ngClass]="{
                   'active underlined-menu': actualMenu === 'agro'
                 }">
-              AGRO
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link fs-6 ms-2 me-2" [routerLink]="['/home/caja']" [ngClass]="{
+            AGRO
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link fs-6 ms-2 me-2" [routerLink]="['/home/caja']" [ngClass]="{
                   'active underlined-menu': actualMenu === 'caja'
                 }">
-              CAJA
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link fs-6 ms-2 me-2" [routerLink]="['/home/clientes']" [ngClass]="{
+            CAJA
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link fs-6 ms-2 me-2" [routerLink]="['/home/clientes']" [ngClass]="{
                   'active underlined-menu': actualMenu === 'clientes'
                 }">
-              CLIENTES
-            </a>
-          </li>
-        </ul>
+            CLIENTES
+          </a>
+        </li>
+      </ul>
       }
-      <div class="ms-auto">
-        <a class="nav-link" [routerLink]="['/home/login']">{{isLogged() ? 'Hola, ' + getUserName() : 'Login'}}</a>
-      </div>
     </div>
   </div>
 </nav>
 <!-- BREADCRUMB -->
 
-<div class="container">
+<div class="container d-flex">
   <ng-container *ngIf="breadcrumbs">
     <nav aria-label="breadcrumb" class="mt-0 mb-0 ps-0">
       <ol class="breadcrumb">
@@ -55,6 +52,9 @@
       </ol>
     </nav>
   </ng-container>
+  <div class="ms-auto">
+    <a class="nav-link fs-6" [routerLink]="['/home/login']">{{isLogged() ? getUserName() : 'Login'}}</a>
+  </div>
 </div>
 
 <div class="container rounded-2 mx-auto mt-4 mb-4 pt-4 pb-4 shadow main-container position-relative" [ngClass]="{
