@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
 import { ConfigService } from './config.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { User, UserLogin } from '../interfaces/user.interface';
+import { User, UserLogin, UserNewPassword } from '../interfaces/user.interface';
 import { lastValueFrom } from 'rxjs';
 import { JwtToken } from '../interfaces/jwt-token.interface';
 
@@ -21,13 +21,29 @@ export class AuthService {
   private jwtToken: JwtToken;
   private user: User | null;
   private suscribers: (()=> void)[];
+  private intervalId: any;
+  private saveInLocal: boolean;
 
   constructor(
     private config: ConfigService,
     private http: HttpClient) 
   { 
     this.END_POINT = '/api/Login';
-    this.jwtToken = { token: localStorage.getItem('api-token') || '' };
+    const token: any = localStorage.getItem('api-token');
+    this.saveInLocal = token ? true : false;
+
+    console.log("Api en localstorage?", this.saveInLocal);
+    
+    try{
+      if(this.saveInLocal)
+        this.jwtToken = JSON.parse(token || '');
+      else
+        this.jwtToken = JSON.parse(sessionStorage.getItem('api-token') || '')
+    } catch {
+      this.jwtToken = { token: '', refreshToken: '' };
+    }
+
+    console.log('Token guardado', this.jwtToken);
     this.user = null;
     if(this.jwtToken.token !== '') this.setToken();
     this.suscribers = [];
@@ -44,13 +60,42 @@ export class AuthService {
    
     this.jwtToken = await  lastValueFrom(this.http.post<JwtToken>(url, user, httpOptions))
 
-    if(saveToken) localStorage.setItem('api-token', this.jwtToken.token);
+    this.saveInLocal = saveToken;
+    if(saveToken) 
+      localStorage.setItem('api-token', JSON.stringify(this.jwtToken));
+    else
+      sessionStorage.setItem('api-token', JSON.stringify(this.jwtToken));
 
     this.setToken();
     console.log(this.user)
     return this.user!;
   }
   
+  async changePasswor(newCred: UserNewPassword): Promise<User> {
+    const url = await this.config.baseUrl(this.END_POINT);
+    
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-type': 'application/json; charset=UTF-8'
+      })
+    }
+   
+    this.jwtToken = await  lastValueFrom(this.http.put<JwtToken>(url, newCred, httpOptions))
+
+    this.saveTokenToStorage();
+
+    this.setToken();
+
+    return this.user!;
+  }
+
+  private saveTokenToStorage(forceToLocalStorage: boolean = false) {
+    if (forceToLocalStorage || this.isTokenInLocalStorage())
+      localStorage.setItem('api-token', JSON.stringify(this.jwtToken));
+    else
+      sessionStorage.setItem('api-token', JSON.stringify(this.jwtToken));
+  }
+
   suscribeExp(f:()=> void) {
     this.suscribers.push(f);
   }
@@ -71,19 +116,48 @@ export class AuthService {
     const name = jwtDecode<PayLoad>(this.jwtToken.token)['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
     const rol = jwtDecode<PayLoad>(this.jwtToken.token)['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
     const exp = jwtDecode(this.jwtToken.token).exp ?? 0;
-    this.user = {name, rol, exp};
+    this.user = { name, rol, exp };
     this.timeExpWatchDog();
   }
 
   private timeExpWatchDog(): void {
-    const interval = setInterval(()=> {
-      if(Math.floor((new Date).getTime() / 1000) >= this.user?.exp! || 0){
-        this.emitTimeExp();
-        localStorage.removeItem('api-token');
-        this.user = null;
-        clearInterval(interval);
+    clearInterval(this.intervalId);
+    this.intervalId = setInterval(async ()=> {
+      // * le quitamos 5 segundos para no darle tiempo a que caduque el token
+      const fiveSeconds = 5;
+      if(Math.floor(((new Date).getTime() / 1000)- fiveSeconds) >= this.user?.exp! || 0){
+        clearInterval(this.intervalId);
+        try {
+          await this.refreshToken();
+        } catch (error) {
+          console.log('Error al refrescar token', error)
+          this.emitTimeExp();
+          localStorage.removeItem('api-token');
+          this.user = null;
+        }
       }
     }, 1000);
+  }
+
+  public async refreshToken(): Promise<void> {
+    const url = await this.config.baseUrl(this.END_POINT) + '/Refresh';
+    
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-type': 'application/json; charset=UTF-8'
+      })
+    }
+   
+    this.jwtToken = await  lastValueFrom(this.http.post<JwtToken>(url, this.jwtToken, httpOptions))
+
+    if(this.saveInLocal) 
+      localStorage.setItem('api-token', JSON.stringify(this.jwtToken));
+    else
+      sessionStorage.setItem('api-token', JSON.stringify(this.jwtToken));
+
+    this.setToken();
+
+    console.log('Token actualizado usuario:', this.user)
   }
 
   public isAdmin(): boolean {
@@ -103,7 +177,11 @@ export class AuthService {
 
   public logoOff(): void {
     this.user = null;
-    this.jwtToken = {token: ''};
+    this.jwtToken = { token: '', refreshToken: '' };
     localStorage.removeItem('api-token');
+  }
+
+  private isTokenInLocalStorage(): boolean {
+    return localStorage.getItem('api-token') !== null && localStorage.getItem('api-token') !== null;
   }
 }

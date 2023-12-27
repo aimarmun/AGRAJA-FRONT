@@ -8,3 +8,7 @@ export interface User {
     rol: string,
     exp: number
 }
+
+export interface UserNewPassword extends UserLogin{
+    newPassword: string
+}

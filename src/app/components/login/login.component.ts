@@ -2,8 +2,8 @@ import { CommonModule, Location } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { User, UserLogin } from 'src/app/interfaces/user.interface';
+import { ActivatedRoute } from '@angular/router';
+import { User, UserLogin, UserNewPassword } from 'src/app/interfaces/user.interface';
 import { AuthService } from 'src/app/services/auth.service';
 import { BreadcrumbService } from 'src/app/services/breadcrumb.service';
 
@@ -23,6 +23,7 @@ export class LoginComponent {
   public formNewPass: FormGroup;
   public errorMsg: string | null;
   public isLoading: boolean;
+  public changePassOk: boolean;
 
   constructor(
       private authService: AuthService,
@@ -33,6 +34,7 @@ export class LoginComponent {
     this.user = {name: '', rol: '', exp: 0 };
     this.errorMsg = null;
     this.isLoading = false;
+    this.changePassOk = false;
 
     this.form = new FormGroup({
       user: new FormControl('', [Validators.required]),
@@ -55,14 +57,13 @@ export class LoginComponent {
   async ngOnInit(){
     this.breadcrumbService.setActiveRoute(this.activeRoute)
     this.user = this.authService.getUser();
+    this.authService.suscribeExp(()=> this.user = null);
     console.log('usuario logeado', this.user);
   }
 
   async onSubmit(): Promise<void> {
-    const user: string = this.form.get('user')?.value || '';
-    const password: string = this.form.get('password')?.value || '';
     const saveToken: boolean = this.form.get('save')?.value;
-    const userLogin: UserLogin = { name: user, password: password }
+    const userLogin: UserLogin = this.getUserLogin();
     this.errorMsg = null;
     this.isLoading = true;
     try{
@@ -80,8 +81,39 @@ export class LoginComponent {
     console.log('user', this.user)
   }
 
-  onSubmitNewPass(): void {
+  async onSubmitNewPass(): Promise<void> {
 
+    const userLogin: UserNewPassword = this.getNewUserCred()
+    
+    this.errorMsg = null;
+    this.isLoading = true;
+    this.changePassOk = false;
+    try{
+      this.user = await this.authService.changePasswor(userLogin);
+      this.changePassOk = true;
+    } catch(error) {
+      if (error instanceof HttpErrorResponse)
+        this.errorMsg = "Usuario o contraseña incorrectos";
+      else
+        this.errorMsg = `Error desconocido: ${error}` 
+    } finally {
+      this.isLoading = false;
+    }
+
+    this.formNewPass.reset();
+  }
+
+  private getUserLogin(): UserLogin {
+    const name: string = this.form.get('user')?.value || '';
+    const password: string = this.form.get('password')?.value || '';
+    return { name, password };
+  }
+
+  private getNewUserCred(): UserNewPassword {
+    const name: string = this.user?.name || '';
+    const password: string = this.formNewPass.get('password')?.value || '';
+    const newPassword: string = this.formNewPass.get('newPassword')?.value || '';
+    return { name, password, newPassword };
   }
 
   onExit(): void {
