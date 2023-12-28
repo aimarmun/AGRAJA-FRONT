@@ -7,6 +7,7 @@ import { Constants } from 'src/app/constants';
 import { Client } from 'src/app/interfaces/client.interface';
 import { CrateSaleRequest } from 'src/app/interfaces/crate.interface';
 import { HiringAddRequestDto } from 'src/app/interfaces/farmer-hiring.interface';
+import { AuthService } from 'src/app/services/auth.service';
 import { BreadcrumbService } from 'src/app/services/breadcrumb.service';
 import { ClientsService } from 'src/app/services/clients.service';
 import { CratesService } from 'src/app/services/crates.service';
@@ -46,7 +47,8 @@ export class ClientDetailsComponent {
     private clientService: ClientsService,
     private crateService: CratesService,
     private farmersService: FarmersService,
-    private location: Location) {
+    private location: Location,
+    private authService: AuthService) {
     this.clientId = 0;
     this.errorNotFound = false;
     this.errorMsgLoadingClient = null;
@@ -107,6 +109,10 @@ export class ClientDetailsComponent {
     } finally {
       this.isLoadingHirings = false;
     }
+  }
+
+  isAdmin(): boolean {
+    return this.authService.isAdmin();
   }
 
   private async loadClientData(): Promise<void> {

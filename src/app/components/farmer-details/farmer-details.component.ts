@@ -8,6 +8,7 @@ import { City } from 'src/app/interfaces/city.interface';
 import { Client, ClientFarmerHirings } from 'src/app/interfaces/client.interface';
 import { CropType } from 'src/app/interfaces/crop-type.interface';
 import { Farmer, FarmerUpdate } from 'src/app/interfaces/farmer.interface';
+import { AuthService } from 'src/app/services/auth.service';
 import { BreadcrumbService } from 'src/app/services/breadcrumb.service';
 import { CitiesService } from 'src/app/services/cities.service';
 import { ClientsService } from 'src/app/services/clients.service';
@@ -49,8 +50,8 @@ export class FarmerDetailsComponent {
     private cropTypeService: CropTypesService,
     private breadCrumService: BreadcrumbService,
     private clientsService: ClientsService,
-    private location: Location
-  ) {
+    private location: Location,
+    private authService: AuthService) {
     this.showUpdateOk = false;
     this.errorUpdatingMsg = null;
     this.farmerId = 0;
@@ -113,6 +114,10 @@ export class FarmerDetailsComponent {
 
   back(){
     this.location.back();
+  }
+
+  isAdmin(): boolean {
+    return this.authService.isAdmin();
   }
 
   toggleConfirmToRemoveClient(client: Client): void {

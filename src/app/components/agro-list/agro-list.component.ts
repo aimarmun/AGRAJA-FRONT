@@ -10,6 +10,7 @@ import { BreadcrumbService } from 'src/app/services/breadcrumb.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormControl, FormGroup } from '@angular/forms';
 import { SettingKey, UserSettingsService } from 'src/app/services/user-settings.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-agro-list',
@@ -37,7 +38,8 @@ export class AgroListComponent {
     private route: ActivatedRoute,
     private breadCrumService: BreadcrumbService,
     private routing: Router,
-    private userSettings: UserSettingsService) {
+    private userSettings: UserSettingsService,
+    private authService: AuthService) {
     this.showButtonAnim = false;
     this.lastError = "";
     this.farmers = [];
@@ -122,5 +124,9 @@ export class AgroListComponent {
     this.userSettings.setUserSetting(SettingKey.CROP_TYPE_SELECTED, this.selectedCropType);
     this.userSettings.setUserSetting(SettingKey.SHOW_HIDDEN_FARMERS, this.showHidden)
     await this.loadFarmers();
+  }
+
+  isAdmin(): boolean {
+    return this.authService.isAdmin();
   }
 }

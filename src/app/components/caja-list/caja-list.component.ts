@@ -4,6 +4,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Crate } from 'src/app/interfaces/crate.interface';
 import { PayOption } from 'src/app/interfaces/pay-option.interface';
+import { AuthService } from 'src/app/services/auth.service';
 import { BreadcrumbService } from 'src/app/services/breadcrumb.service';
 import { CratesService } from 'src/app/services/crates.service';
 import { PayOptionsService } from 'src/app/services/pay-options.service';
@@ -30,7 +31,8 @@ export class CajaListComponent {
     private routing: Router,
     private cratesService: CratesService,
     private userSettings: UserSettingsService,
-    private payOptionsService: PayOptionsService){
+    private payOptionsService: PayOptionsService,
+    private authService: AuthService){
       this.loading = true;
       this.placeHoldersItems = new Array(8).fill(null);
       this.crates = [];
@@ -55,6 +57,10 @@ export class CajaListComponent {
     this.priceOrder = this.form.get('priceOrder')?.value || 0;
     this.userSettings.setUserSetting(SettingKey.CRATE_PRICE_ORDER, this.priceOrder);
     this.orderByPrice();
+  }
+
+  isAdmin(): boolean {
+    return this.authService.isAdmin();
   }
 
   private async orderByPrice(): Promise<void> {

@@ -41,8 +41,10 @@
     <div>😟 {{this.lastError}}</div>
 </div>
 
-<button aria-label="Añadir granjero" type="button"
-    class="btn btn-danger btn-lg fixed-bottom ms-auto rounded-circle btn-add"
-    [ngClass]="{'animate__animated animate__rotateOut animate__faster': showButtonAnim}"
-    (click)="showButtonAnim = true" (animationend)="goAddCrate()">
-</button>
+@if (isAdmin()) {
+    <button aria-label="Añadir caja" type="button"
+        class="btn btn-danger btn-lg fixed-bottom ms-auto rounded-circle btn-add"
+        [ngClass]="{'animate__animated animate__rotateOut animate__faster': showButtonAnim}"
+        (click)="showButtonAnim = true" (animationend)="goAddCrate()">
+    </button>
+}

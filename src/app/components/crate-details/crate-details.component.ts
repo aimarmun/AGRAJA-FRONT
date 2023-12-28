@@ -5,6 +5,7 @@ import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/fo
 import { ActivatedRoute } from '@angular/router';
 import { Constants } from 'src/app/constants';
 import { Crate, CrateSaleRequest, CrateUpdate } from 'src/app/interfaces/crate.interface';
+import { AuthService } from 'src/app/services/auth.service';
 import { BreadcrumbService } from 'src/app/services/breadcrumb.service';
 import { CratesService } from 'src/app/services/crates.service';
 
@@ -33,7 +34,8 @@ export class CrateDetailsComponent {
   constructor(private activatedRoute: ActivatedRoute,
     private breadCrumService: BreadcrumbService,
     private cratesService: CratesService,
-    private location: Location){
+    private location: Location,
+    private authService: AuthService){
       this.crateId = 0;
       this.errorNotFound = false;
       this.errorMsgLoadingCrate = '';
@@ -135,6 +137,10 @@ export class CrateDetailsComponent {
       }
     }
     this.isLoadingSales = false;
+  }
+
+  isAdmin(): boolean {
+    return this.authService.isAdmin();
   }
 
   getSalesTotalAmount(): number{
