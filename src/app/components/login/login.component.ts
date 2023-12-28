@@ -3,6 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { lastValueFrom } from 'rxjs';
 import { User, UserLogin, UserNewPassword } from 'src/app/interfaces/user.interface';
 import { AuthService } from 'src/app/services/auth.service';
 import { BreadcrumbService } from 'src/app/services/breadcrumb.service';
@@ -22,19 +23,21 @@ export class LoginComponent {
   public form: FormGroup;
   public formNewPass: FormGroup;
   public errorMsg: string | null;
+  public errorRoleMsg: string | null;
   public isLoading: boolean;
   public changePassOk: boolean;
 
   constructor(
-      private authService: AuthService,
-      private breadcrumbService: BreadcrumbService,
-      private activeRoute: ActivatedRoute,
-      private location: Location
-    ){
-    this.user = {name: '', rol: '', exp: 0 };
+    private authService: AuthService,
+    private breadcrumbService: BreadcrumbService,
+    private activeRoute: ActivatedRoute,
+    private location: Location
+  ) {
+    this.user = { name: '', rol: '', exp: 0 };
     this.errorMsg = null;
     this.isLoading = false;
     this.changePassOk = false;
+    this.errorRoleMsg = null;
 
     this.form = new FormGroup({
       user: new FormControl('', [Validators.required]),
@@ -54,11 +57,17 @@ export class LoginComponent {
     }, [this.passwordCompare]);
   }
 
-  async ngOnInit(){
+  async ngOnInit() {
     this.breadcrumbService.setActiveRoute(this.activeRoute)
     this.user = this.authService.getUser();
-    this.authService.suscribeExp(()=> this.user = null);
+    this.authService.suscribeExp(() => this.user = null);
     console.log('usuario logeado', this.user);
+
+    this.activeRoute.queryParams.subscribe((value) => {
+      this.errorRoleMsg = (value as { errorMsg: string }).errorMsg;
+      console.log('error de rol:', this.errorRoleMsg)
+    });
+
   }
 
   async onSubmit(): Promise<void> {
@@ -66,15 +75,15 @@ export class LoginComponent {
     const userLogin: UserLogin = this.getUserLogin();
     this.errorMsg = null;
     this.isLoading = true;
-    try{
+    try {
       this.user = await this.authService.login(userLogin, saveToken);
       //this.router.navigateByUrl('/home');
       this.location.back();
-    } catch(error) {
+    } catch (error) {
       if (error instanceof HttpErrorResponse)
         this.errorMsg = "Usuario o contraseña incorrectos";
       else
-        this.errorMsg = `Error desconocido: ${error}` 
+        this.errorMsg = `Error desconocido: ${error}`
     } finally {
       this.isLoading = false;
     }
@@ -84,18 +93,18 @@ export class LoginComponent {
   async onSubmitNewPass(): Promise<void> {
 
     const userLogin: UserNewPassword = this.getNewUserCred()
-    
+
     this.errorMsg = null;
     this.isLoading = true;
     this.changePassOk = false;
-    try{
+    try {
       this.user = await this.authService.changePasswor(userLogin);
       this.changePassOk = true;
-    } catch(error) {
+    } catch (error) {
       if (error instanceof HttpErrorResponse)
         this.errorMsg = "Usuario o contraseña incorrectos";
       else
-        this.errorMsg = `Error desconocido: ${error}` 
+        this.errorMsg = `Error desconocido: ${error}`
     } finally {
       this.isLoading = false;
     }
@@ -121,14 +130,17 @@ export class LoginComponent {
     this.user = null;
   }
 
-  passwordCompare(form: AbstractControl): any{
+  passwordCompare(form: AbstractControl): any {
     const password = form.get('newPassword')?.value;
 
     const repeatPass = form.get('newPasswordR')?.value;
 
-    if(password != repeatPass){
-      return { passwordCompare: true};
+    if (password != repeatPass) {
+      return { passwordCompare: true };
     }
     return null;
+  }
+  back(): void{
+    this.location.back();
   }
 }

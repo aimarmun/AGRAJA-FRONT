@@ -1,3 +1,4 @@
+<button type="button" aria-label="volver atrás" class="btn-back ms-5 position-absolute" (click)="back()"></button>
 <div class="w-100 h-100 justify-content-between">
     <div class="card ms-auto me-auto mt-auto mb-auto shadow">
         <img class="card-img-top" src="../assets/agraja_logo.svg" alt="Card image cap">
@@ -121,7 +122,7 @@
                                     </div>
                                 }
                             </div>
-                            
+
                             @if(changePassOk && !isLoading){
                                 <div 
                                     class="alert alert-success animate__animated animate__bounceInUp w-100 text-center mt-2 pt-1 pb-1"
@@ -158,3 +159,21 @@
         </div>
     </div>
 </div>
+
+@if (errorRoleMsg) {
+    <div  class="toast fade show ms-auto me-auto mt-5" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-header">
+        <span>⚠️</span>
+        <strong class="me-auto">Error de permisos</strong>
+        <small>requiere admin</small>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body">
+        {{ errorRoleMsg }}
+      </div>
+    </div>
+}
+
+
+
+

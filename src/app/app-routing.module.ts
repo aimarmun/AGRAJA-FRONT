@@ -16,15 +16,27 @@ import { authGuard } from './guards/auth.guard';
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: '/home' },
   { path: 'home', component: MainMenuComponent, children: [] },
-  { path: 'home/agro', pathMatch: 'full', component: AgroListComponent },
-  { path: 'home/caja', component: CajaListComponent },
-  { path: 'home/caja/detalles/:id', component: CrateDetailsComponent }, 
-  { path: 'home/caja/nueva', canActivate: [authGuard], component: CrateAddComponent },
-  { path: 'home/agro/agricultor/:id', component: FarmerDetailsComponent },
-  { path: 'home/agro/nuevo', pathMatch: 'full', component: FarmerAddComponent },
-  { path: 'home/clientes', pathMatch: 'full', component: ClientListComponent },
-  { path: 'home/clientes/detalles/:id', component: ClientDetailsComponent },
-  { path: 'home/clientes/nuevo', pathMatch: 'full', component: ClientAddComponent },
+  { path: 'home/agro', canActivate: [authGuard], pathMatch: 'full', component: AgroListComponent },
+  { path: 'home/caja', canActivate: [authGuard], component: CajaListComponent },
+  { path: 'home/caja/detalles/:id', canActivate: [authGuard], component: CrateDetailsComponent },
+  { 
+    path: 'home/caja/nueva', canActivate: [authGuard], data: {
+      adminRol: true
+    }, component: CrateAddComponent 
+  },
+  { path: 'home/agro/agricultor/:id', canActivate: [authGuard], component: FarmerDetailsComponent },
+  { 
+    path: 'home/agro/nuevo', canActivate: [authGuard], data: {
+      adminRol: true
+    }, pathMatch: 'full', component: FarmerAddComponent 
+  },
+  { path: 'home/clientes', canActivate: [authGuard], pathMatch: 'full', component: ClientListComponent },
+  { path: 'home/clientes/detalles/:id', canActivate: [authGuard], component: ClientDetailsComponent },
+  { 
+    path: 'home/clientes/nuevo', canActivate: [authGuard], data: {
+      adminRol: true
+    }, pathMatch: 'full', component: ClientAddComponent 
+  },
   { path: 'home/login', pathMatch: 'full', component: LoginComponent },
   { path: "**", redirectTo: "/home" }
 ];
