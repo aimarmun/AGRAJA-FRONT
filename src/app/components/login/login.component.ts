@@ -1,9 +1,8 @@
 import { CommonModule, Location } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { lastValueFrom } from 'rxjs';
 import { User, UserLogin, UserNewPassword } from 'src/app/interfaces/user.interface';
 import { AuthService } from 'src/app/services/auth.service';
 import { BreadcrumbService } from 'src/app/services/breadcrumb.service';
@@ -26,6 +25,7 @@ export class LoginComponent {
   public errorRoleMsg: string | null;
   public isLoading: boolean;
   public changePassOk: boolean;
+  public showPassReq: boolean;
 
   constructor(
     private authService: AuthService,
@@ -38,6 +38,7 @@ export class LoginComponent {
     this.isLoading = false;
     this.changePassOk = false;
     this.errorRoleMsg = null;
+    this.showPassReq = false;
 
     this.form = new FormGroup({
       user: new FormControl('', [Validators.required]),
@@ -67,7 +68,6 @@ export class LoginComponent {
       this.errorRoleMsg = (value as { errorMsg: string }).errorMsg;
       console.log('error de rol:', this.errorRoleMsg)
     });
-
   }
 
   async onSubmit(): Promise<void> {
@@ -142,5 +142,9 @@ export class LoginComponent {
   }
   back(): void{
     this.location.back();
+  }
+
+  showPassToast(): void {
+    this.showPassReq = true;
   }
 }

@@ -1,4 +1,4 @@
-<button type="button" aria-label="volver atrás" class="btn-back ms-5 position-absolute" (click)="back()"></button>
+<button type="button" aria-label="volver atrás" class="btn-back ms-5 position-absolute z-1" (click)="back()"></button>
 <div class="w-100 h-100 justify-content-between">
     <div class="card ms-auto me-auto mt-auto mb-auto shadow">
         <img class="card-img-top" src="../assets/agraja_logo.svg" alt="Card image cap">
@@ -102,7 +102,8 @@
                                 </div>
                                 @if(formNewPass.get('newPassword')?.touched && formNewPass.get('newPassword')?.hasError('pattern')){
                                     <div class="w-100">
-                                        <span class="fst-italic text-danger">La contraseña no cumple con los requerimientos mínimos</span>
+                                        <span class="fst-italic text-danger">La contraseña no cumple con los 
+                                            <span class="text-decoration-underline cursor-pointer" (click)="showPassToast()">requerimientos</span> mínimos</span>
                                     </div>
                                 }
                             </div>
@@ -174,6 +175,22 @@
     </div>
 }
 
+@if (showPassReq){
+    <div  class="toast fade show position-absolute toast-pass" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+          <span>ℹ️</span>
+          <strong class="me-auto">Requerimientos mínimos para contraseñas</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close" (click)="showPassReq = false"></button>
+        </div>
+        <div class="toast-body">
+            <p>· 8 Caractéres mínimos.</p> 
+            <p>· Una minúscula.</p> 
+            <p>· Una mayúscula. </p>
+            <p>· Números.</p>
+            <p>· Uno de estos símbolos: $, &#64;, !, %, *, ?, y &.</p>
+        </div>
+      </div>
+}
 
 
 

@@ -13,7 +13,7 @@ export const authGuard: CanActivateFn = (route, state) => {
   console.log('guard data', route.data)
   if(route.data){
     const roleData: RoleData = route.data as RoleData;
-    if(roleData.adminRol)
+    if(!authService.isAdmin() && roleData.adminRol)
     { 
       console.log('El usuario no es administrador')
       const params = { errorMsg: 'No tienes permisos suficientes. Prueba a cambiar de usuario.' }
