@@ -3,7 +3,7 @@ import { jwtDecode } from 'jwt-decode';
 import { ConfigService } from './config.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { User, UserLogin, UserNewPassword } from '../interfaces/user.interface';
-import { lastValueFrom } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, lastValueFrom, of, tap } from 'rxjs';
 import { JwtToken } from '../interfaces/jwt-token.interface';
 
 class PayLoad {
@@ -21,8 +21,10 @@ export class AuthService {
   private jwtToken: JwtToken;
   private user: User | null;
   private suscribers: (()=> void)[];
-  private intervalId: any;
+ // private intervalId: any;
   private saveInLocal: boolean;
+  public isRefreshingToken: boolean;
+  public refreshToken$ = new BehaviorSubject<JwtToken | null>(null);
 
   constructor(
     private config: ConfigService,
@@ -31,10 +33,11 @@ export class AuthService {
     this.END_POINT = '/api/Login';
     const token: any = localStorage.getItem('api-token');
     this.saveInLocal = token ? true : false;
+    this.isRefreshingToken = false;
 
     console.log("Api en localstorage?", this.saveInLocal);
     
-    try{
+    try {
       if(this.saveInLocal)
         this.jwtToken = JSON.parse(token || '');
       else
@@ -47,10 +50,11 @@ export class AuthService {
     this.user = null;
     if(this.jwtToken.token !== '') this.setToken();
     this.suscribers = [];
+    console.log('Arrancando con usuario', this.user);
   }
 
   async login(user: UserLogin, saveToken: boolean): Promise<User> {
-    const url = await this.config.baseUrl(this.END_POINT);
+    const url = this.config.getBaseUrl(this.END_POINT);
     
     const httpOptions = {
       headers: new HttpHeaders({
@@ -61,18 +65,27 @@ export class AuthService {
     this.jwtToken = await  lastValueFrom(this.http.post<JwtToken>(url, user, httpOptions))
 
     this.saveInLocal = saveToken;
-    if(saveToken) 
-      localStorage.setItem('api-token', JSON.stringify(this.jwtToken));
-    else
-      sessionStorage.setItem('api-token', JSON.stringify(this.jwtToken));
+    
+    this.saveToken();
 
     this.setToken();
     console.log(this.user)
     return this.user!;
   }
+
+  async revoke(): Promise<void>{
+   // clearInterval(this.intervalId);
+    const url = this.config.getBaseUrl(this.END_POINT) + '/Revoke';
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-type': 'application/json; charset=UTF-8'
+      })
+    }
+    await lastValueFrom(this.http.post(url, httpOptions));
+  }
   
   async changePasswor(newCred: UserNewPassword): Promise<User> {
-    const url = await this.config.baseUrl(this.END_POINT);
+    const url = this.config.getBaseUrl(this.END_POINT);
     
     const httpOptions = {
       headers: new HttpHeaders({
@@ -112,52 +125,46 @@ export class AuthService {
   }
 
   private setToken(): void {
-    
     const name = jwtDecode<PayLoad>(this.jwtToken.token)['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
     const rol = jwtDecode<PayLoad>(this.jwtToken.token)['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
     const exp = jwtDecode(this.jwtToken.token).exp ?? 0;
     this.user = { name, rol, exp };
-    this.timeExpWatchDog();
   }
 
-  private timeExpWatchDog(): void {
-    clearInterval(this.intervalId);
-    this.intervalId = setInterval(async ()=> {
-      // * le quitamos 5 segundos para no darle tiempo a que caduque el token
-      const fiveSeconds = 5;
-      if(Math.floor(((new Date).getTime() / 1000) - fiveSeconds) >= this.user?.exp! || 0){
-        clearInterval(this.intervalId);
-        console.log('token expirado')
-        try {
-          await this.refreshToken();
-        } catch (error) {
-          console.log('Error al refrescar token', error)
-          this.emitTimeExp();
-          this.logoOff();
-        }
-      }
-    }, 1000);
+  /**
+   * Comprueba si Bearer token ha expirado
+   * @returns retorna verdadero si Bearer token ha expirado
+   */
+  private isExpired(): boolean {
+    return (Math.floor((new Date).getTime() / 1000) >= (this.user?.exp! || 0));
   }
 
-  public async refreshToken(): Promise<void> {
-    const url = await this.config.baseUrl(this.END_POINT) + '/Refresh';
-    
+  refreshTokenOb(): Observable<any> {
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-type': 'application/json; charset=UTF-8'
       })
     }
-   
-    this.jwtToken = await  lastValueFrom(this.http.post<JwtToken>(url, this.jwtToken, httpOptions))
+    return this.http
+      .post<JwtToken>(this.config.getBaseUrl(`${this.END_POINT}/Refresh`), this.jwtToken, httpOptions)
+      .pipe(
+        tap((tokens: JwtToken) => {
+          this.jwtToken = tokens;
+          this.saveToken();
+        }),
+        catchError((error) => {
+          console.log('error on refresh tokens:', error);
+          this.logoOff();
+          return of(false);
+        })
+      );
+  }
 
-    if(this.saveInLocal) 
+  private saveToken() {
+    if (this.saveInLocal)
       localStorage.setItem('api-token', JSON.stringify(this.jwtToken));
     else
       sessionStorage.setItem('api-token', JSON.stringify(this.jwtToken));
-
-    this.setToken();
-
-    console.log('Token actualizado usuario:', this.user)
   }
 
   public isAdmin(): boolean {

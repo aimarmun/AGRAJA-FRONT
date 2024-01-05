@@ -23,7 +23,7 @@ export class CropTypesService {
     if(this.cropTypes.length > 0)
       return this.cropTypes;
 
-    const url = await this.config.baseUrl(this.END_POINT);
+    const url = this.config.getBaseUrl(this.END_POINT);
     this.cropTypes = [...await lastValueFrom(this.http.get<CropType[]>(url))];
     return this.cropTypes;
   }

@@ -149,7 +149,7 @@
                   </div>
 
                 <div class="form-group w-100 mt-4">
-                    <button class="btn btn-success w-100" (click)="onExit()">
+                    <button class="btn btn-success w-100" (click)="onExit()" [disabled]="isLoading">
                         <span>SALIR</span>
                         @if(isLoading) {
                             <span class="spinner-border spinner-border-sm pe-2 ms-2" aria-hidden="true"></span>

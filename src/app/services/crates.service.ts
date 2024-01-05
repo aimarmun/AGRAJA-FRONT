@@ -16,12 +16,12 @@ export class CratesService {
   }
 
   async getAllAsync(): Promise<Crate[]> {
-    const url = await this.config.baseUrl(this.END_POINT);
+    const url = this.config.getBaseUrl(this.END_POINT);
     return await lastValueFrom(this.http.get<Crate[]>(url))
   }
 
   async addSaleAsync(crateSale: CrateSale): Promise<CrateSaleRequest> {
-    const url = await this.config.baseUrl(this.END_POINT) + 'CrateSale';
+    const url = this.config.getBaseUrl(this.END_POINT) + 'CrateSale';
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-type': 'application/json; charset=UTF-8',
@@ -31,12 +31,12 @@ export class CratesService {
   }
 
   async getByIdAsync(crateId: number): Promise<Crate> {
-    const url = await this.config.baseUrl(this.END_POINT) + crateId;
+    const url = this.config.getBaseUrl(this.END_POINT) + crateId;
     return await lastValueFrom(this.http.get<Crate>(url));
   }
 
   async updateAsync(crateId: number, updateData: CrateUpdate): Promise<Crate> {
-    const url = await this.config.baseUrl(this.END_POINT) + crateId;
+    const url = this.config.getBaseUrl(this.END_POINT) + crateId;
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-type': 'application/json; charset=UTF-8',
@@ -46,7 +46,7 @@ export class CratesService {
   }
 
   async addAsync(crate: Crate): Promise<Crate> {
-    const url = await this.config.baseUrl(this.END_POINT);
+    const url = this.config.getBaseUrl(this.END_POINT);
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-type': 'application/json; charset=UTF-8',
@@ -56,12 +56,12 @@ export class CratesService {
   }
   
   async getAllSalesByCrateId(crateId: number): Promise<CrateSaleRequest[]> {
-    const url = await this.config.baseUrl(this.END_POINT) +`GetAllSales/${crateId}`;
+    const url = this.config.getBaseUrl(this.END_POINT) +`GetAllSales/${crateId}`;
     return await lastValueFrom(this.http.get<CrateSaleRequest[]>(url));
   }
   
   async getAllSalesByClientId(clientId: number): Promise<CrateSaleRequest[]> {
-    const url = await this.config.baseUrl(this.END_POINT) +`GetAllClientSales/${clientId}`;
+    const url = this.config.getBaseUrl(this.END_POINT) +`GetAllClientSales/${clientId}`;
     return await lastValueFrom(this.http.get<CrateSaleRequest[]>(url));
   }
 }

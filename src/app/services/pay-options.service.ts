@@ -22,7 +22,7 @@ export class PayOptionsService {
     if(this.payOptions.length > 0)
       return this.payOptions;
 
-    const url = await this.configService.baseUrl(this.END_POINT);
+    const url = this.configService.getBaseUrl(this.END_POINT);
     this.payOptions = [...await lastValueFrom(this.http.get<PayOption[]>(url))];
     return  this.payOptions;
   }

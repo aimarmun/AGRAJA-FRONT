@@ -20,7 +20,7 @@ export class ClientsService {
 
      async getByPartialDniOrNameAsync(dni: string, onlyActive: boolean = true): Promise<Client[]>{
       this.cancelHttpPetitions();
-      const url = await this.config.baseUrl(this.END_POINT) + `/byPartialDniOrName/${dni}/${onlyActive}`;
+      const url = this.config.getBaseUrl(this.END_POINT) + `/byPartialDniOrName/${dni}/${onlyActive}`;
       //console.log(url)
       const observable = this.http.get<Client[]>(url);
       const subscription =  observable.pipe(
@@ -60,12 +60,12 @@ export class ClientsService {
     
 
     async getByIdAsync(clientId: number): Promise<Client> {
-      const url = await this.config.baseUrl(this.END_POINT) + `/${clientId}`;
+      const url = this.config.getBaseUrl(this.END_POINT) + `/${clientId}`;
       return await lastValueFrom(this.http.get<Client>(url)); 
     }
     
     async updateAsync(clientId: number, client: Client): Promise<Client> {
-      const url = await this.config.baseUrl(this.END_POINT) + `/${clientId}`;
+      const url = this.config.getBaseUrl(this.END_POINT) + `/${clientId}`;
       const httpOptions = {
         headers: new HttpHeaders({
           'Content-type': 'application/json; charset=UTF-8',
@@ -75,7 +75,7 @@ export class ClientsService {
     }
 
     async addAsync(client: Client): Promise<Client> {
-      const url = await this.config.baseUrl(this.END_POINT);
+      const url = this.config.getBaseUrl(this.END_POINT);
       const httpOptions = {
         headers: new HttpHeaders({
           'Content-type': 'application/json; charset=UTF-8',

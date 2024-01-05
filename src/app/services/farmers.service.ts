@@ -21,23 +21,23 @@ export class FarmersService {
   }
 
   async getAllAsync(): Promise<Farmer[]> {
-    const url = await this.config.baseUrl(this.END_POINT) + "CropType/0";
+    const url = this.config.getBaseUrl(this.END_POINT) + "CropType/0";
     return await lastValueFrom(this.http.get<Farmer[]>(url));
   }
 
   async getByCropIdAsync(cropId: number): Promise<Farmer[]> {
-    const url = await this.config.baseUrl(this.END_POINT) + `CropType/${cropId}`;
+    const url = this.config.getBaseUrl(this.END_POINT) + `CropType/${cropId}`;
     return await lastValueFrom(this.http.get<Farmer[]>(url));
   }
 
   async getByIdAsync(id: number): Promise<Farmer> {
-    const url = await this.config.baseUrl(this.END_POINT) + id;
+    const url = this.config.getBaseUrl(this.END_POINT) + id;
     return await lastValueFrom(this.http.get<Farmer>(url));
   }
 
   async updateAsync(id:number, updateData: FarmerUpdate): Promise<Farmer>{
     //console.log(updateData);
-    const url = await this.config.baseUrl(this.END_POINT) + id;
+    const url = this.config.getBaseUrl(this.END_POINT) + id;
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-type': 'application/json; charset=UTF-8',
@@ -47,12 +47,12 @@ export class FarmersService {
   }
 
   async getFarmerHiringsByIdAsync(farmerId: number): Promise<FarmerHiring[]> {
-    const url = await this.config.baseUrl(this.END_POINT) + `Hiring/${farmerId}`;
+    const url = this.config.getBaseUrl(this.END_POINT) + `Hiring/${farmerId}`;
     return await lastValueFrom(this.http.get<FarmerHiring[]>(url))
   }
 
   async addHiringAsync(newHiring: FarmerHiringRequest): Promise<HiringAddRequestDto>{
-    const url = await this.config.baseUrl(this.END_POINT) + 'Hiring'
+    const url = this.config.getBaseUrl(this.END_POINT) + 'Hiring'
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-type': 'application/json; charset=UTF-8',
@@ -62,7 +62,7 @@ export class FarmersService {
   }
 
   async AddAsync(newFarmer: FarmerAdd): Promise<Farmer>{
-    const url = await this.config.baseUrl(this.END_POINT)
+    const url = this.config.getBaseUrl(this.END_POINT)
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-type': 'application/json; charset=UTF-8',
@@ -72,17 +72,17 @@ export class FarmersService {
   }
 
   async removeHiringAsync(farmer: Farmer, client: Client): Promise<void> {
-    const url = await this.config.baseUrl(this.END_POINT) + `Hiring/${farmer.id}/${client.id}`;
+    const url = this.config.getBaseUrl(this.END_POINT) + `Hiring/${farmer.id}/${client.id}`;
     await lastValueFrom(this.http.delete(url));
   }
 
   async removeHiringByIdAsync(hiringId: number): Promise<void> {
-    const url = await this.config.baseUrl(this.END_POINT) + `Hiring/${hiringId}`;
+    const url = this.config.getBaseUrl(this.END_POINT) + `Hiring/${hiringId}`;
     await lastValueFrom(this.http.delete(url));
   }
 
   async getHiringsByClientIdAsync(clientId: number): Promise<HiringAddRequestDto[]> {
-    const url = await this.config.baseUrl(this.END_POINT) + `Hiring/ByClient/${clientId}`;
+    const url = this.config.getBaseUrl(this.END_POINT) + `Hiring/ByClient/${clientId}`;
     return await lastValueFrom(this.http.get<HiringAddRequestDto[]>(url));
   }
 }

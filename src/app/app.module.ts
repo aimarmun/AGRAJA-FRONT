@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -22,6 +22,28 @@ import { ClientDetailsComponent } from './components/client-details/client-detai
 import { DateTimePipe } from './pipes/date-time.pipe';
 import { ClientAddComponent } from './components/client-add/client-add.component';
 import { authInterceptor } from './interceptors/auth.interceptor';
+import { ConfigService } from './services/config.service';
+
+/**
+ * Sirve para leer la configuración en el servicio de configuración
+ * antes de cargar la App.
+ * Para su correcto funcionamiento es necesario registrarlo como proveedor de la siguiente manera:
+ * {
+      provide: APP_INITIALIZER,
+      useFactory: appConfigInit,
+      multi: true,
+      deps: [ConfigService]
+    }
+
+    Mas info: https://angular.io/api/core/APP_INITIALIZER
+ * @param config Servicio de configuración
+ * @returns 
+ */
+export function appConfigInit(config: ConfigService) {
+  return (()=>{
+    return config.loadConfig();
+  })
+}
 
 @NgModule({
   declarations: [
@@ -51,6 +73,12 @@ import { authInterceptor } from './interceptors/auth.interceptor';
     ReactiveFormsModule
   ],
   providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: appConfigInit,
+      multi: true,
+      deps: [ConfigService]
+    },
     provideHttpClient(
       withInterceptors(
         [

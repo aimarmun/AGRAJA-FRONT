@@ -18,15 +18,27 @@ export class ConfigService {
       this.loaded = false;
   }
 
-  private async loadConfig(): Promise<void> {
+  /**
+   * Método para leer la configuración. EJECUTARLO EN EL NGONINIT DE APP.COMPONENT.TS.
+   * @returns 
+   */
+  async loadConfig(): Promise<void> {
     if(this.loaded) return;
-  //  console.log('Leyendo configuración');   
     this.config = await lastValueFrom(this.http.get<Config>('assets/config.json', { responseType: 'json' }));
+    console.log('Configuración leída.');
     this.loaded = true;
   }
 
-  async baseUrl(withEndPoin: string = ""): Promise<string> {
+  /**
+   * Este método está deprecado y será eliminado
+   * @deprecated
+   */
+  async baseUrl(withEndPoin: string = ''): Promise<string> {
     await this.loadConfig();
     return this.config.apiHost + withEndPoin;
+  }
+
+  getBaseUrl(withEndPoint: string = ''): string {
+    return this.config.apiHost + withEndPoint;
   }
 }

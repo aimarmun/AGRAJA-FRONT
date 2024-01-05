@@ -106,7 +106,11 @@
     
         <div class="d-flex mb-2 mt-2">
           <button *ngIf="!showAddingOk" [disabled]="isAddingClient || !form.valid" type="submit"
-            class="btn btn-primary align-self-center">{{form.valid ? '👨‍👩‍👧‍👦 Añadir nuevo cliente' : 'Algún dato no es válido'}}</button>
+            class="btn btn-primary align-self-center">{{form.valid ? '👨‍👩‍👧‍👦 Añadir nuevo cliente' : 'Algún dato no es válido'}}
+            <ng-container *ngIf="isAddingClient">
+              <span class="spinner-border spinner-border-sm pe-2" aria-hidden="true"></span>
+            </ng-container>
+          </button>
         
           <span *ngIf="showAddingOk"
             class="alert alert-success animate__animated animate__bounceInUp text-center mt-2 m-0 flex-fill pt-1 pb-1"

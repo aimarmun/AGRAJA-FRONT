@@ -24,7 +24,8 @@ export class CitiesService {
     if(this.cities.length > 0)
       return this.cities;
     
-    const url = await this.config.baseUrl(this.END_POINT);
+    const url = this.config.getBaseUrl(this.END_POINT);
+    console.log('api endpoin', url)
     this.cities = [... await lastValueFrom(this.http.get<City[]>(url))];
     return this.cities;
   }

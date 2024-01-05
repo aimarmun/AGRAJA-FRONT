@@ -3,6 +3,7 @@ import { BreadcrumbService } from './services/breadcrumb.service';
 import { Breadcrumb } from './interfaces/breadcrumb.interface';
 import { AuthService } from './services/auth.service';
 import { Router } from '@angular/router';
+import { ConfigService } from './services/config.service';
 
 @Component({
   selector: 'app-root',
@@ -18,13 +19,14 @@ export class AppComponent {
   constructor(
     private breadcrumbService: BreadcrumbService,
     private authService: AuthService,
+    private config: ConfigService,
     private route: Router){
       this.collapse = true;
       this.breadcrumbs = []
       this.actualMenu = '';
     }
     
-    ngOnInit () {
+    async ngOnInit () {
       this.breadcrumbService.suscribe(b => {
          this.breadcrumbs = [...b];
          this.actualMenu = this.breadcrumbs.at(1)?.label || '';

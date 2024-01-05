@@ -80,8 +80,13 @@ export class LoginComponent {
       //this.router.navigateByUrl('/home');
       this.location.back();
     } catch (error) {
-      if (error instanceof HttpErrorResponse)
-        this.errorMsg = "Usuario o contraseña incorrectos";
+      if (error instanceof HttpErrorResponse) {
+        console.log(error.status)
+        if(error.status === 404)
+          this.errorMsg = "Usuario o contraseña incorrectos";
+        else
+          this.errorMsg = `Error en servidor remoto: ${error.message}`;
+      }
       else
         this.errorMsg = `Error desconocido: ${error}`
     } finally {
@@ -112,6 +117,19 @@ export class LoginComponent {
     this.formNewPass.reset();
   }
 
+  async onExit(): Promise<void> {
+    this.isLoading = true;
+    try {
+      await this.authService.revoke();
+    } catch (error){
+      console.log(error);
+    } finally {
+      this.authService.logoOff();
+      this.user = null;
+      this.isLoading = false;
+    }
+  }
+
   private getUserLogin(): UserLogin {
     const name: string = this.form.get('user')?.value || '';
     const password: string = this.form.get('password')?.value || '';
@@ -123,11 +141,6 @@ export class LoginComponent {
     const password: string = this.formNewPass.get('password')?.value || '';
     const newPassword: string = this.formNewPass.get('newPassword')?.value || '';
     return { name, password, newPassword };
-  }
-
-  onExit(): void {
-    this.authService.logoOff();
-    this.user = null;
   }
 
   passwordCompare(form: AbstractControl): any {
