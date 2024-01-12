@@ -89,7 +89,7 @@
                           [ngClass]="{'disabled': isBookingHiring || farmerHiring}">
                           <span *ngIf="selectedClient && selectedClient.id === client.id && isBookingHiring"
                             class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-                          {{selectedClient && selectedClient.id === client.id && isBookingHiring ? '🚜💨'
+                          {{selectedClient && selectedClient.id === client.id && isBookingHiring ? 'asignar'
                           : 'asignar...'}}
                         </button></td>
                     </tr>

@@ -33,7 +33,7 @@ export class ClientsService {
 
     async getAllAsync(): Promise<Client[]> {
       this.cancelHttpPetitions();
-      const url = await this.config.baseUrl(this.END_POINT);
+      const url = this.config.getBaseUrl(this.END_POINT);
       const observable = this.http.get<Client[]>(url);
       const subscription =  observable.pipe(
         takeUntil(this.unsubscribe$)
@@ -53,7 +53,7 @@ export class ClientsService {
     }
 
     async getClientsByFarmerHirings(farmerId: number): Promise<ClientFarmerHirings[]>{
-      const url = await this.config.baseUrl(this.END_POINT) + `/byFarmerHiring/${farmerId}`;
+      const url = this.config.getBaseUrl(this.END_POINT) + `/byFarmerHiring/${farmerId}`;
       return await lastValueFrom(this.http.get<ClientFarmerHirings[]>(url));
     }
 

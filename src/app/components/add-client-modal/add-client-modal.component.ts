@@ -115,19 +115,8 @@ export class AdClientModalComponent {
     this.selectedClient = client;
     this.isBookingHiring = true;
     this.saleHiringRequest = null;
-
+    this.errorMsg = null;
     try {
-      /* const hirings: FarmerHiring[] = await this.farmerService.getFarmerHiringsByIdAsync(this.farmer.id);
-      // console.log('Hirings',hirings)
-      if (hirings) {
-        if (hirings.find(h => h.clientId === client.id)) {
-          this.errorMsg = 'Este cliente ya tiene contratado a este agricultor'
-          return;
-        }
-        await this.addHiring(client);
-      }else{
-      } */
-      //* PREGUNTAR A ROSA 👆
       await this.addHiring(client);
     } catch (error) {
       this.catchError(error);

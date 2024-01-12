@@ -58,7 +58,7 @@
     
     <div class="row mb-3">
       <!-- STOCK -->
-      <div class="col">
+      <div class="col-sm col-12">
         <label for="stock" class="form-label">Stock:</label>
         <div class="input-group">
           <input type="number" min="0" step="1" class="form-control" id="stock" formControlName="stock" aria-describedby="stockAddon">
@@ -186,7 +186,7 @@
           <th scope="row">{{index + 1}}</th>
           <td>
             <span [ngClass]="{'fst-italic text-secondary': !sale.clientIsActive}">
-              {{sale.saleDateTimeUtz + 'z' | date: 'dd/MM/yyyy'}}
+              {{sale.saleDateTimeUtz + 'Z' | date: 'dd/MM/yyyy'}}
             </span>
           </td>
           <td class="w-100">

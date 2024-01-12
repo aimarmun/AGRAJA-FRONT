@@ -1,3 +1,17 @@
 {
-    "apiHost": "http://localhost:5145"
+    "apiHost": "http://localhost:5145",
+    "startMsgs": [  
+        {
+            "id": 1,
+            "beforeTitle": "ℹ️",
+            "title": "Mensaje de bienvenida 1",
+            "msg": "Mensaje de bienvenida de prueba"
+        },
+        {
+            "id": 2,
+            "beforeTitle": "ℹ️",
+            "title": "Mensaje de bienvenida 2",
+            "msg": "Mensaje de bienvenida de prueba 2"
+        }
+    ]
 }

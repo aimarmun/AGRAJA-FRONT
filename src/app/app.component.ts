@@ -4,6 +4,7 @@ import { Breadcrumb } from './interfaces/breadcrumb.interface';
 import { AuthService } from './services/auth.service';
 import { Router } from '@angular/router';
 import { ConfigService } from './services/config.service';
+import { ToastMsg } from './interfaces/config.interface';
 
 @Component({
   selector: 'app-root',
@@ -15,6 +16,7 @@ export class AppComponent {
   public breadcrumbs: Breadcrumb[];
   public collapse: boolean;
   public actualMenu: string;
+  public startToasts: ToastMsg[];
 
   constructor(
     private breadcrumbService: BreadcrumbService,
@@ -24,6 +26,7 @@ export class AppComponent {
       this.collapse = true;
       this.breadcrumbs = []
       this.actualMenu = '';
+      this.startToasts = [];
     }
     
     async ngOnInit () {
@@ -36,6 +39,7 @@ export class AppComponent {
         console.log('Sesión caducada');
         this.route.navigateByUrl('/home/login');
       });
+      this.startToasts = [...this.config.getStartMsgs()];
     }
 
     isLogged(): boolean{

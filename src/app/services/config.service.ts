@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Config } from '../interfaces/config.interface';
+import { Config, ToastMsg } from '../interfaces/config.interface';
 import { lastValueFrom } from 'rxjs';
 
 @Injectable({
@@ -13,7 +13,8 @@ export class ConfigService {
   constructor(private http: HttpClient) 
   {   
       this.config = {
-         "apiHost" : ""
+         "apiHost" : "",
+         "startMsgs": []
       }
       this.loaded = false;
   }
@@ -40,5 +41,9 @@ export class ConfigService {
 
   getBaseUrl(withEndPoint: string = ''): string {
     return this.config.apiHost + withEndPoint;
+  }
+
+  getStartMsgs(): ToastMsg[] {
+    return this.config.startMsgs;
   }
 }
