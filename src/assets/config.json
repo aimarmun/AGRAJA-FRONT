@@ -11,7 +11,7 @@
             "id": 2,
             "beforeTitle": "ℹ️",
             "title": "Mensaje de bienvenida 2",
-            "msg": "Mensaje de bienvenida de prueba 2"
+            "msg": "Mensaje de <b>bienvenida</b> de prueba 2"
         }
     ]
 }

@@ -5,6 +5,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { User, UserLogin, UserNewPassword } from '../interfaces/user.interface';
 import { BehaviorSubject, Observable, catchError, lastValueFrom, of, tap } from 'rxjs';
 import { JwtToken } from '../interfaces/jwt-token.interface';
+import { Router } from '@angular/router';
 
 class PayLoad {
   'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier': string;
@@ -28,7 +29,8 @@ export class AuthService {
 
   constructor(
     private config: ConfigService,
-    private http: HttpClient) 
+    private http: HttpClient,
+    private route: Router) 
   { 
     this.END_POINT = '/api/Login';
     const token: any = localStorage.getItem('api-token');
@@ -155,6 +157,7 @@ export class AuthService {
         catchError((error) => {
           console.log('error on refresh tokens:', error);
           this.logoOff();
+          this.route.navigateByUrl('/home/login');
           return of(false);
         })
       );

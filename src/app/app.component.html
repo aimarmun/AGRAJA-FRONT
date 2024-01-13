@@ -72,8 +72,7 @@
         <strong class="me-auto">{{startToast.title}}</strong>
         <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
       </div>
-      <div class="toast-body">
-          {{startToast.msg}}
+      <div class="toast-body" [innerHTML]="startToast.msg">
       </div>
   </div>
   }
