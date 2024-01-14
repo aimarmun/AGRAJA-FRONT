@@ -26,7 +26,7 @@ export class ConfigService {
   async loadConfig(): Promise<void> {
     if(this.loaded) return;
     this.config = await lastValueFrom(this.http.get<Config>('assets/config.json', { responseType: 'json' }));
-    console.log('Configuración leída.');
+    // console.log('Configuración leída.');
     this.loaded = true;
   }
 

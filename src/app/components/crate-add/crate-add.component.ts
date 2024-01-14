@@ -102,7 +102,7 @@ export class CrateAddComponent {
 
     try {
       this.crate = await this.cratesService.addAsync(updateData);
-      console.log(this.crate);
+      // console.log(this.crate);
       this.setFormValues();
       this.showAddOk = true;
     } catch (error) {

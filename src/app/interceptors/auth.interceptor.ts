@@ -41,7 +41,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
                             if(token) {
                                 authService.refreshToken$.next(token);
 
-                                console.log('Token actualizado desde interceptor', token);
+                                // console.log('Token actualizado desde interceptor', token);
                                 req = req.clone({
                                     setHeaders: {
                                         'Authorization': `Bearer ${authService.getToken().token}`
@@ -59,8 +59,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
                         take(1),
                         switchMap((token: JwtToken | null)=> {
                             
-                            console.log('desde refreshToken$:', token);
-                            console.log('|_El que me dá el servicio:', authService.getToken());
+                            //console.log('desde refreshToken$:', token);
+                            //console.log('|_El que me dá el servicio:', authService.getToken());
                              return next(req.clone({
                                 setHeaders: {
                                     'Authorization': `Bearer ${authService.getToken().token}`

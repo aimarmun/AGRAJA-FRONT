@@ -73,7 +73,7 @@ export class ClientDetailsComponent {
   ngOnInit(): void {
     this.breadcrumbService.setActiveRoute(this.activeRoute, true);
     this.activeRoute.params.subscribe(async (params: any) => {
-      console.log('Farmer id:', params.id);
+     // console.log('Farmer id:', params.id);
       this.clientId = Number(params.id);
       if (this.clientId === 0 || Number.isNaN(this.clientId)) {
         this.errorNotFound = true;

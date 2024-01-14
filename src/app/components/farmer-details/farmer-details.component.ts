@@ -100,7 +100,7 @@ export class FarmerDetailsComponent {
     this.breadCrumService.setActiveRoute(this.activatedRoute, true);
 
     this.activatedRoute.params.subscribe(async (params: any) => {
-      console.log('Farmer id:', params.id);
+      // console.log('Farmer id:', params.id);
       this.farmerId = Number(params.id);
       if (this.farmerId === 0 || Number.isNaN(this.farmerId)) {
         this.errorNotFound = true;

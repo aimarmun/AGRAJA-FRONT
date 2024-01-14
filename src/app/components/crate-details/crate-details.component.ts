@@ -83,7 +83,7 @@ export class CrateDetailsComponent {
     this.breadCrumService.setActiveRoute(this.activatedRoute, true);
 
     this.activatedRoute.params.subscribe(async (params: any) => {
-      console.log('Farmer id:', params.id);
+     // console.log('Farmer id:', params.id);
       this.crateId = Number(params.id);
       if (this.crateId === 0 || Number.isNaN(this.crateId)) {
         this.errorNotFound = true;
@@ -124,7 +124,7 @@ export class CrateDetailsComponent {
   async loadSalesData(): Promise<void> {
     try{
       this.sales = [...await this.cratesService.getAllSalesByCrateId(this.crateId)];
-      console.log('ventas caja:', this.sales);
+     // console.log('ventas caja:', this.sales);
     } catch (error) {
       if (error instanceof HttpErrorResponse) {
        // console.log('status error', error.status)

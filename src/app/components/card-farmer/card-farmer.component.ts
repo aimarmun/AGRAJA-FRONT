@@ -56,7 +56,7 @@ export class CardFarmerComponent {
   }
 
   async onNewHiring(): Promise<void> {
-    console.log('Nueva contratación realizada');
+   // console.log('Nueva contratación realizada');
     await this.readHirings();
   }
 

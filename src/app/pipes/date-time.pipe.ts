@@ -14,7 +14,7 @@ export class DateTimePipe implements PipeTransform {
   transform(utcDate: Date, 
     format: UtcToLocalTimeFormat | string): string | null {
     const browserLanguae = navigator.language;
-    console.log('Browser lenguaje', browserLanguae)
+    // console.log('Browser lenguaje', browserLanguae)
     if(format == UtcToLocalTimeFormat.SHORT){
       const date = new Date(utcDate).toLocaleDateString(browserLanguae);
       const time = new Date(utcDate).toLocaleTimeString(browserLanguae);

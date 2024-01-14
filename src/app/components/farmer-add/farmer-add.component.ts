@@ -148,7 +148,7 @@ export class FarmerAddComponent {
       this.farmer[key] = this.form?.controls?.[key]?.value;
     });
     
-    console.log('nuevo farmer', this.farmer);
+   // console.log('nuevo farmer', this.farmer);
 
     try{
       const newFarmer: Farmer = await this.farmerService.AddAsync(this.farmer);

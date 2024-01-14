@@ -67,7 +67,7 @@ export class ClientListComponent {
   async onShowHiddenChange(): Promise<void> {
     this.showHidden = this.form.get('isActive')?.value === true || false;
     this.userSettings.setUserSetting(SettingKey.SHOW_HIDDEN_CLIENTS, this.showHidden);
-    console.log('buscar', this.dniOrNameFilter)
+   //  console.log('buscar', this.dniOrNameFilter)
     if(this.dniOrNameFilter !== null && this.dniOrNameFilter !== '')
       await this.loadClientsByDniOrName();
     else

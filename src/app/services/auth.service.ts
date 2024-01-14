@@ -37,7 +37,7 @@ export class AuthService {
     this.saveInLocal = token ? true : false;
     this.isRefreshingToken = false;
 
-    console.log("Api en localstorage?", this.saveInLocal);
+    //console.log("Api en localstorage?", this.saveInLocal);
     
     try {
       if(this.saveInLocal)
@@ -48,11 +48,11 @@ export class AuthService {
       this.jwtToken = { token: '', refreshToken: '' };
     }
 
-    console.log('Token guardado', this.jwtToken);
+   // console.log('Token guardado', this.jwtToken);
     this.user = null;
     if(this.jwtToken.token !== '') this.setToken();
     this.suscribers = [];
-    console.log('Arrancando con usuario', this.user);
+    //console.log('Arrancando con usuario', this.user);
   }
 
   async login(user: UserLogin, saveToken: boolean): Promise<User> {
@@ -71,7 +71,7 @@ export class AuthService {
     this.saveToken();
 
     this.setToken();
-    console.log(this.user)
+    //console.log(this.user)
     return this.user!;
   }
 
@@ -155,7 +155,7 @@ export class AuthService {
           this.saveToken();
         }),
         catchError((error) => {
-          console.log('error on refresh tokens:', error);
+          //console.log('error on refresh tokens:', error);
           this.logoOff();
           this.route.navigateByUrl('/home/login');
           return of(false);

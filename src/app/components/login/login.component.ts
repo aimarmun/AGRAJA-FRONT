@@ -62,11 +62,11 @@ export class LoginComponent {
     this.breadcrumbService.setActiveRoute(this.activeRoute)
     this.user = this.authService.getUser();
     this.authService.suscribeExp(() => this.user = null);
-    console.log('usuario logeado', this.user);
+   // console.log('usuario logeado', this.user);
 
     this.activeRoute.queryParams.subscribe((value) => {
       this.errorRoleMsg = (value as { errorMsg: string }).errorMsg;
-      console.log('error de rol:', this.errorRoleMsg)
+    //  console.log('error de rol:', this.errorRoleMsg)
     });
   }
 
@@ -81,7 +81,7 @@ export class LoginComponent {
       this.location.back();
     } catch (error) {
       if (error instanceof HttpErrorResponse) {
-        console.log(error.status)
+       // console.log(error.status)
         if(error.status === 404)
           this.errorMsg = "Usuario o contraseña incorrectos";
         else
@@ -92,7 +92,7 @@ export class LoginComponent {
     } finally {
       this.isLoading = false;
     }
-    console.log('user', this.user)
+   // console.log('user', this.user)
   }
 
   async onSubmitNewPass(): Promise<void> {
@@ -122,7 +122,7 @@ export class LoginComponent {
     try {
       await this.authService.revoke();
     } catch (error){
-      console.log(error);
+     // console.log(error);
     } finally {
       this.authService.logoOff();
       this.user = null;
