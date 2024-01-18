@@ -65,7 +65,9 @@ export class AppComponent {
         Para la autenticación se ha utilizado Jwt Bearer tokens y las contraseñas se cifran mediante AES256 en la base de datos.
         Solo se permite el inicio de sesión de un mismo usuario a la vez, por lo que es posible que si alguien está utilizando el mismo usuario desde otro navegador te tire de la sesión.
         
-        Muy pronto publicaré el codigo fuente en Github.`);
+        Revisa su código fuente en Github:
+        👉Fronted: https://github.com/aimarmun/AGRAJA-FRONT
+        👉Backend: https://github.com/aimarmun/AGRAJA-BACKEND`);
     }
 
     isLogged(): boolean{
