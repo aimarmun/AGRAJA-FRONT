@@ -1,4 +1,4 @@
-# AGRJA-FRONT: Aplicación Web para la contratación de agricultores y venta de cajas de productos.
+# AGRAJA-FRONT: Aplicación Web para la contratación de agricultores y venta de cajas de productos.
 
 Agraja es mi proyecto de final de Bootcamp Fullstack y esta es la parte fronted, puedes ver la parte backend desde aquí 👉 [https://github.com/aimarmun/AGRAJA-BACKEND](https://github.com/aimarmun/AGRAJA-BACKEND). 
 Se trata de una aplicación pensada para el administrador de una cooperativa de agricultura ecológica. 
