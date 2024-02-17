@@ -1,8 +1,7 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
-import { BehaviorSubject, catchError, filter, finalize, switchMap, take, throwError } from 'rxjs';
-import { Router } from '@angular/router';
+import { catchError, filter, finalize, switchMap, take, throwError } from 'rxjs';
 import { JwtToken } from '../interfaces/jwt-token.interface';
 
 // * Meter esto en providers en app.moudles.ts para que funcione el interceptor funcional
