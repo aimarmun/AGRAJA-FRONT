@@ -1,8 +1,10 @@
 # AGRJA-FRONT: Aplicación Web para la contratación de agricultores y venta de cajas de productos.
 
-Agraja es mi proyecto de final de Bootcamp Fullstack.
+Agraja es mi proyecto de final de Bootcamp Fullstack y esta es la parte fronted, puedes ver la parte backend desde aquí 👉 [https://github.com/aimarmun/AGRAJA-BACKEND](https://github.com/aimarmun/AGRAJA-BACKEND). 
+Se trata de una aplicación pensada para el administrador de una cooperativa de agricultura ecológica. 
+El administrador o vendedor puede hacer ventas de cajas de productos o puede hacer contrataciones de agricultores con clientes.
 
-Puedes verlo en acción aquí 👉 [https://demo.aimarmun.com](https://demo.aimarmun.com)
+Puedes ver una demo de Agraja en acción desde aquí 👉 [https://slit4.me](https://slit4.me/hdfdc)
 
 ###### Características:
 
@@ -31,6 +33,10 @@ Puedes verlo en acción aquí 👉 [https://demo.aimarmun.com](https://demo.aima
 - Utilización de *skeletons* durante la carga de elementos.
 
 - Servicio de configuración de aplicación: Permite configurar la URL de la API sin necesidad  de recompilar el código. También permite configurar mensajes (*toast*) de bienvenida.
+
+- Utilización de Bootstrap para los estilos.
+
+- Angular 17.
 
 # Instalación
 
